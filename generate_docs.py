@@ -758,7 +758,7 @@ def create_dossier_architecture():
 def create_specifications():
     doc = Document()
     setup_document(doc)
-    add_cover_page(doc, "Specifications Fonctionnelles", "Regles de Gestion, Cas d'Utilisation et Parcours Utilisateurs", "2.0")
+    add_cover_page(doc, "Specifications Fonctionnelles et Techniques", "Regles de Gestion, Cas d'Utilisation, Architecture, Base de Donnees et Securite", "2.0")
     add_toc_placeholder(doc)
 
     doc.add_heading("1. Regles de Gestion", level=1)
@@ -841,8 +841,407 @@ def create_specifications():
         ]
     )
 
-    doc.save("docs/4_Specifications_Fonctionnelles.docx")
-    print("[OK] 4_Specifications_Fonctionnelles.docx")
+    # ================================================================
+    # PARTIE II : SPECIFICATIONS TECHNIQUES
+    # ================================================================
+    doc.add_page_break()
+    doc.add_heading("PARTIE II : SPECIFICATIONS TECHNIQUES", level=1)
+    doc.add_paragraph("Cette partie presente l'ensemble des choix techniques, l'architecture logicielle, les technologies utilisees, le schema de la base de donnees, la securite et l'environnement de deploiement de la plateforme UniGames.")
+
+    # --- 3. PILE TECHNOLOGIQUE ---
+    doc.add_heading("3. Pile Technologique (Technology Stack)", level=1)
+    doc.add_heading("3.1. Technologies Backend", level=2)
+    add_styled_table(doc,
+        ["Technologie", "Version", "Role", "Justification"],
+        [
+            ["PHP", "8.2+", "Langage de programmation serveur", "Langage mature, performant, avec un ecosysteme riche. Support natif des types, enums et fibres."],
+            ["Laravel", "12.x", "Framework applicatif MVC", "Framework PHP le plus populaire. Fournit un ORM (Eloquent), un systeme de routage, des middlewares, la gestion des sessions et un moteur de templates (Blade)."],
+            ["Laravel Breeze", "2.x", "Kit d'authentification", "Fournit les fonctionnalites de connexion, deconnexion, inscription, reinitialisation de mot de passe et verification d'email, avec des vues Blade pre-configurees."],
+            ["Eloquent ORM", "Inclus dans Laravel", "Mapping Objet-Relationnel", "Permet de manipuler les tables de la base de donnees comme des objets PHP. Gestion automatique des relations (hasMany, belongsTo), des accesseurs calcules et des casts."],
+            ["Composer", "2.x", "Gestionnaire de dependances PHP", "Gere l'installation et la mise a jour de toutes les bibliotheques PHP du projet."],
+        ]
+    )
+
+    doc.add_heading("3.2. Technologies Frontend", level=2)
+    add_styled_table(doc,
+        ["Technologie", "Version", "Role", "Justification"],
+        [
+            ["Blade", "Inclus dans Laravel", "Moteur de templates", "Moteur de templates natif de Laravel. Permet l'heritage de layouts, les composants reutilisables (x-app-layout, x-sidebar, x-topbar) et l'injection de donnees."],
+            ["Tailwind CSS", "4.x", "Framework CSS utilitaire", "Approche utility-first permettant un design rapide, coherent et responsive. Classes atomiques composables (flex, grid, text-*, bg-*, etc.)."],
+            ["Alpine.js", "3.x", "Micro-framework JavaScript reactif", "Fournit la reactivite cote client (x-data, x-model, x-show, @click) sans la complexite d'un framework SPA comme Vue ou React. Ideal pour les interactions legeres."],
+            ["Vite", "6.x", "Bundler et serveur de developpement", "Remplacement de Webpack. Compile les assets CSS/JS avec Hot Module Replacement (HMR) pour un rechargement instantane en developpement."],
+            ["PostCSS + Autoprefixer", "8.x / 10.x", "Post-traitement CSS", "Assure la compatibilite cross-navigateur en ajoutant automatiquement les prefixes vendeur necessaires."],
+        ]
+    )
+
+    doc.add_heading("3.3. Base de Donnees", level=2)
+    add_styled_table(doc,
+        ["Technologie", "Version", "Role", "Justification"],
+        [
+            ["MySQL", "8.0+", "SGBD Relationnel", "Systeme de gestion de base de donnees relationnelle robuste, performant et largement supporte. Support du JSON natif pour le stockage des buteurs."],
+        ]
+    )
+
+    doc.add_heading("3.4. Outils de Developpement", level=2)
+    add_styled_table(doc,
+        ["Outil", "Role"],
+        [
+            ["Git", "Controle de version distribue (depot GitHub)"],
+            ["GitHub", "Hebergement du depot distant et collaboration"],
+            ["Node.js / NPM", "Environnement d'execution JavaScript pour le build frontend"],
+            ["PHP Artisan", "Interface en ligne de commande (CLI) de Laravel pour les migrations, seeders, generation de controleurs, etc."],
+            ["VS Code", "Editeur de code principal avec extensions PHP, Blade et Tailwind CSS"],
+        ]
+    )
+
+    # --- 4. ARCHITECTURE MVC ---
+    doc.add_heading("4. Architecture Logicielle (MVC)", level=1)
+    doc.add_heading("4.1. Patron Model-View-Controller", level=2)
+    doc.add_paragraph("UniGames adopte strictement le patron MVC impose par Laravel, qui separe les responsabilites en trois couches distinctes :")
+    add_bold_para(doc, "Modele (Model) : ", "Represente les entites metier et encapsule la logique d'acces aux donnees via Eloquent ORM. Chaque modele correspond a une table de la base de donnees et definit les relations, accesseurs calcules et regles de validation.")
+    add_bold_para(doc, "Vue (View) : ", "Les templates Blade (.blade.php) generent le HTML. Ils utilisent le systeme de composants Laravel (x-app-layout, x-sidebar, x-topbar) pour la coherence visuelle. Le CSS est gere par Tailwind, et les interactions legeres par Alpine.js.")
+    add_bold_para(doc, "Controleur (Controller) : ", "Orchestre le flux applicatif : reception des requetes HTTP, validation des donnees d'entree, appel aux modeles, preparation des donnees et retour de la vue appropriee.")
+
+    doc.add_heading("4.2. Diagramme de Flux d'une Requete HTTP", level=2)
+    doc.add_paragraph("Le cycle de vie d'une requete dans UniGames suit le flux suivant :")
+    doc.add_paragraph("1. Le navigateur envoie une requete HTTP (GET/POST/PUT/DELETE) au serveur.", style='List Number')
+    doc.add_paragraph("2. Le routeur (routes/web.php) identifie la route correspondante et le controleur associe.", style='List Number')
+    doc.add_paragraph("3. Les middlewares sont executes dans l'ordre (authentification, verification du role, protection CSRF).", style='List Number')
+    doc.add_paragraph("4. Le controleur recoit la requete validee, interagit avec le(s) modele(s) Eloquent.", style='List Number')
+    doc.add_paragraph("5. Le modele Eloquent execute les requetes SQL via le Query Builder et retourne les resultats.", style='List Number')
+    doc.add_paragraph("6. Le controleur transmet les donnees a la vue Blade.", style='List Number')
+    doc.add_paragraph("7. Blade compile le template en HTML, intègre les assets CSS/JS via Vite, et renvoie la reponse au navigateur.", style='List Number')
+
+    # --- 5. MODELES ET BASE DE DONNEES ---
+    doc.add_heading("5. Schema de la Base de Donnees", level=1)
+    doc.add_heading("5.1. Modele Conceptuel de Donnees (MCD)", level=2)
+    doc.add_paragraph("Le systeme repose sur 7 entites metier principales interconnectees par des relations de type 1:N (un-a-plusieurs) :")
+    add_styled_table(doc,
+        ["Entite", "Table SQL", "Cle Primaire", "Description"],
+        [
+            ["Utilisateur", "users", "id (BIGINT UNSIGNED, auto-increment)", "Compte utilisateur avec role (admin ou staff)"],
+            ["Edition", "editions", "id (BIGINT UNSIGNED, auto-increment)", "Competition / tournoi avec dates et statut"],
+            ["Faculte", "facultes", "id (BIGINT UNSIGNED, auto-increment)", "Etablissement universitaire participant"],
+            ["Discipline", "disciplines", "id (BIGINT UNSIGNED, auto-increment)", "Sport pratique dans le tournoi"],
+            ["Equipe", "equipes", "id (BIGINT UNSIGNED, auto-increment)", "Equipe rattachee a une faculte, discipline et edition"],
+            ["Joueur", "joueurs", "id (BIGINT UNSIGNED, auto-increment)", "Sportif rattache a une equipe"],
+            ["Match", "matchs", "id (BIGINT UNSIGNED, auto-increment)", "Rencontre entre deux equipes avec score et buteurs"],
+        ]
+    )
+
+    doc.add_heading("5.2. Relations entre Entites", level=2)
+    add_styled_table(doc,
+        ["Relation", "Type", "Cle Etrangere", "Contrainte"],
+        [
+            ["Edition -> Faculte", "1:N (Une edition a plusieurs facultes)", "facultes.edition_id -> editions.id", "CASCADE on DELETE"],
+            ["Edition -> Equipe", "1:N (Une edition a plusieurs equipes)", "equipes.edition_id -> editions.id", "CASCADE on DELETE"],
+            ["Edition -> Match", "1:N (Une edition a plusieurs matchs)", "matchs.edition_id -> editions.id", "CASCADE on DELETE"],
+            ["Faculte -> Equipe", "1:N (Une faculte a plusieurs equipes)", "equipes.faculte_id -> facultes.id", "CASCADE on DELETE"],
+            ["Discipline -> Equipe", "1:N (Une discipline a plusieurs equipes)", "equipes.discipline_id -> disciplines.id", "CASCADE on DELETE"],
+            ["Discipline -> Match", "1:N (Une discipline a plusieurs matchs)", "matchs.discipline_id -> disciplines.id", "CASCADE on DELETE"],
+            ["Equipe -> Joueur", "1:N (Une equipe a plusieurs joueurs)", "joueurs.equipe_id -> equipes.id", "CASCADE on DELETE"],
+            ["Equipe -> Match (A)", "1:N (Une equipe joue plusieurs matchs en tant qu'equipe A)", "matchs.equipe_a_id -> equipes.id", "CASCADE on DELETE"],
+            ["Equipe -> Match (B)", "1:N (Une equipe joue plusieurs matchs en tant qu'equipe B)", "matchs.equipe_b_id -> equipes.id", "CASCADE on DELETE"],
+        ]
+    )
+
+    doc.add_heading("5.3. Dictionnaire de Donnees Detaille", level=2)
+
+    doc.add_paragraph("Table : users (Utilisateurs)")
+    add_styled_table(doc,
+        ["Colonne", "Type SQL", "Nullable", "Contrainte", "Description"],
+        [
+            ["id", "BIGINT UNSIGNED", "Non", "PK, Auto-increment", "Identifiant unique de l'utilisateur"],
+            ["name", "VARCHAR(255)", "Non", "-", "Nom complet de l'utilisateur"],
+            ["email", "VARCHAR(255)", "Non", "UNIQUE", "Adresse e-mail (identifiant de connexion)"],
+            ["email_verified_at", "TIMESTAMP", "Oui", "-", "Date de verification de l'email"],
+            ["password", "VARCHAR(255)", "Non", "-", "Mot de passe hashe (bcrypt, 12 rounds)"],
+            ["role", "VARCHAR(50)", "Non", "DEFAULT 'staff'", "Role : 'admin' ou 'staff'"],
+            ["remember_token", "VARCHAR(100)", "Oui", "-", "Token 'Se souvenir de moi'"],
+            ["created_at", "TIMESTAMP", "Oui", "-", "Date de creation du compte"],
+            ["updated_at", "TIMESTAMP", "Oui", "-", "Date de derniere modification"],
+        ]
+    )
+
+    doc.add_paragraph("Table : editions (Editions du Tournoi)")
+    add_styled_table(doc,
+        ["Colonne", "Type SQL", "Nullable", "Contrainte", "Description"],
+        [
+            ["id", "BIGINT UNSIGNED", "Non", "PK, Auto-increment", "Identifiant unique"],
+            ["nom", "VARCHAR(255)", "Non", "-", "Nom de l'edition (ex: 'Edition 2026')"],
+            ["date_debut", "DATE", "Non", "-", "Date de debut du tournoi"],
+            ["date_fin", "DATE", "Non", "-", "Date de fin du tournoi"],
+            ["lieu", "VARCHAR(255)", "Oui", "-", "Lieu principal du tournoi"],
+            ["description", "TEXT", "Oui", "-", "Description libre"],
+            ["statut", "VARCHAR(50)", "Non", "DEFAULT 'a_venir'", "Cycle de vie : a_venir -> en_cours -> terminee"],
+            ["created_at", "TIMESTAMP", "Oui", "-", "Horodatage creation"],
+            ["updated_at", "TIMESTAMP", "Oui", "-", "Horodatage modification"],
+        ]
+    )
+
+    doc.add_paragraph("Table : facultes (Facultes / Etablissements)")
+    add_styled_table(doc,
+        ["Colonne", "Type SQL", "Nullable", "Contrainte", "Description"],
+        [
+            ["id", "BIGINT UNSIGNED", "Non", "PK, Auto-increment", "Identifiant unique"],
+            ["nom", "VARCHAR(255)", "Non", "-", "Nom complet de la faculte"],
+            ["logo", "VARCHAR(255)", "Oui", "-", "Chemin vers le fichier logo"],
+            ["couleur", "VARCHAR(7)", "Oui", "-", "Code couleur hexadecimal (#RRGGBB)"],
+            ["edition_id", "BIGINT UNSIGNED", "Non", "FK -> editions.id", "Edition de rattachement"],
+            ["created_at", "TIMESTAMP", "Oui", "-", "Horodatage creation"],
+            ["updated_at", "TIMESTAMP", "Oui", "-", "Horodatage modification"],
+        ]
+    )
+
+    doc.add_paragraph("Table : disciplines (Disciplines Sportives)")
+    add_styled_table(doc,
+        ["Colonne", "Type SQL", "Nullable", "Contrainte", "Description"],
+        [
+            ["id", "BIGINT UNSIGNED", "Non", "PK, Auto-increment", "Identifiant unique"],
+            ["nom", "VARCHAR(255)", "Non", "-", "Nom du sport (ex: Football, Basketball)"],
+            ["type", "VARCHAR(255)", "Oui", "-", "Type de sport (collectif, individuel)"],
+            ["nb_joueurs", "INT", "Oui", "-", "Nombre de joueurs par equipe"],
+            ["created_at", "TIMESTAMP", "Oui", "-", "Horodatage creation"],
+            ["updated_at", "TIMESTAMP", "Oui", "-", "Horodatage modification"],
+        ]
+    )
+
+    doc.add_paragraph("Table : equipes (Equipes)")
+    add_styled_table(doc,
+        ["Colonne", "Type SQL", "Nullable", "Contrainte", "Description"],
+        [
+            ["id", "BIGINT UNSIGNED", "Non", "PK, Auto-increment", "Identifiant unique"],
+            ["nom", "VARCHAR(255)", "Non", "-", "Nom de l'equipe"],
+            ["faculte_id", "BIGINT UNSIGNED", "Non", "FK -> facultes.id", "Faculte representee"],
+            ["discipline_id", "BIGINT UNSIGNED", "Non", "FK -> disciplines.id", "Discipline pratiquee"],
+            ["edition_id", "BIGINT UNSIGNED", "Non", "FK -> editions.id", "Edition de la competition"],
+            ["created_at", "TIMESTAMP", "Oui", "-", "Horodatage creation"],
+            ["updated_at", "TIMESTAMP", "Oui", "-", "Horodatage modification"],
+        ]
+    )
+
+    doc.add_paragraph("Table : joueurs (Joueurs)")
+    add_styled_table(doc,
+        ["Colonne", "Type SQL", "Nullable", "Contrainte", "Description"],
+        [
+            ["id", "BIGINT UNSIGNED", "Non", "PK, Auto-increment", "Identifiant unique"],
+            ["nom", "VARCHAR(255)", "Non", "-", "Nom de famille du joueur"],
+            ["prenom", "VARCHAR(255)", "Non", "-", "Prenom du joueur"],
+            ["sexe", "CHAR(1)", "Non", "-", "Genre : M (Masculin) ou F (Feminin)"],
+            ["equipe_id", "BIGINT UNSIGNED", "Non", "FK -> equipes.id", "Equipe d'appartenance"],
+            ["numero_maillot", "INT", "Oui", "-", "Numero de maillot du joueur"],
+            ["buts", "INT", "Non", "DEFAULT 0", "Compteur total de buts marques (incremente automatiquement)"],
+            ["created_at", "TIMESTAMP", "Oui", "-", "Horodatage creation"],
+            ["updated_at", "TIMESTAMP", "Oui", "-", "Horodatage modification"],
+        ]
+    )
+
+    doc.add_paragraph("Table : matchs (Rencontres Sportives)")
+    add_styled_table(doc,
+        ["Colonne", "Type SQL", "Nullable", "Contrainte", "Description"],
+        [
+            ["id", "BIGINT UNSIGNED", "Non", "PK, Auto-increment", "Identifiant unique"],
+            ["equipe_a_id", "BIGINT UNSIGNED", "Non", "FK -> equipes.id", "Equipe recevante (domicile)"],
+            ["equipe_b_id", "BIGINT UNSIGNED", "Non", "FK -> equipes.id", "Equipe visiteuse (exterieur)"],
+            ["discipline_id", "BIGINT UNSIGNED", "Non", "FK -> disciplines.id", "Discipline sportive du match"],
+            ["edition_id", "BIGINT UNSIGNED", "Non", "FK -> editions.id", "Edition du tournoi"],
+            ["date_match", "DATETIME", "Non", "-", "Date et heure prevue du match"],
+            ["lieu", "VARCHAR(255)", "Oui", "-", "Lieu / stade du match"],
+            ["phase", "VARCHAR(255)", "Non", "-", "Phase : Poules, Quarts, Demies, Petite Finale, Finale"],
+            ["score_a", "INT", "Oui", "DEFAULT NULL", "Score de l'equipe A (null si non joue)"],
+            ["score_b", "INT", "Oui", "DEFAULT NULL", "Score de l'equipe B (null si non joue)"],
+            ["statut", "VARCHAR(50)", "Non", "DEFAULT 'planifie'", "Cycle : planifie -> en_cours -> joue"],
+            ["buteurs", "JSON", "Oui", "-", "Donnees JSON des buteurs ({equipe_a: [...], equipe_b: [...]})"],
+            ["created_at", "TIMESTAMP", "Oui", "-", "Horodatage creation"],
+            ["updated_at", "TIMESTAMP", "Oui", "-", "Horodatage modification"],
+        ]
+    )
+
+    # --- 6. ROUTES ET API ---
+    doc.add_heading("6. Cartographie des Routes (API Interne)", level=1)
+    doc.add_heading("6.1. Routes Publiques (Authentifiees)", level=2)
+    doc.add_paragraph("Ces routes sont accessibles a tout utilisateur connecte (admin ou staff) :")
+    add_styled_table(doc,
+        ["Methode HTTP", "URI", "Controleur@Methode", "Description"],
+        [
+            ["GET", "/dashboard", "DashboardController@index", "Tableau de bord avec KPIs"],
+            ["GET", "/editions", "EditionController@index", "Liste des editions"],
+            ["GET", "/editions/{id}", "EditionController@show", "Detail d'une edition"],
+            ["GET", "/editions/{id}/arbre", "EditionController@arbre", "Arbre du tournoi"],
+            ["GET", "/facultes", "FaculteController@index", "Liste des facultes"],
+            ["GET", "/facultes/{id}", "FaculteController@show", "Detail d'une faculte"],
+            ["GET", "/disciplines", "DisciplineController@index", "Liste des disciplines"],
+            ["GET", "/equipes", "EquipeController@index", "Liste des equipes"],
+            ["GET", "/equipes/{id}", "EquipeController@show", "Detail d'une equipe"],
+            ["GET", "/joueurs", "JoueurController@index", "Liste des joueurs"],
+            ["GET", "/matchs", "MatchController@index", "Calendrier des matchs"],
+            ["GET", "/matchs/{id}", "MatchController@show", "Detail d'un match"],
+            ["GET", "/classements", "ClassementController@index", "Classements par discipline"],
+        ]
+    )
+
+    doc.add_heading("6.2. Routes Protegees (Admin uniquement)", level=2)
+    doc.add_paragraph("Ces routes necessitent le role 'admin' et sont protegees par le middleware 'admin' :")
+    add_styled_table(doc,
+        ["Methode HTTP", "URI", "Action", "Description"],
+        [
+            ["GET", "/editions/create", "CRUD", "Formulaire de creation d'edition"],
+            ["POST", "/editions", "CRUD", "Enregistrer une nouvelle edition"],
+            ["GET", "/editions/{id}/edit", "CRUD", "Formulaire de modification d'edition"],
+            ["PUT", "/editions/{id}", "CRUD", "Mettre a jour une edition"],
+            ["DELETE", "/editions/{id}", "CRUD", "Supprimer une edition"],
+            ["GET/POST", "/facultes/create, /facultes", "CRUD", "Creation de faculte"],
+            ["PUT/DELETE", "/facultes/{id}", "CRUD", "Modification/Suppression de faculte"],
+            ["GET/POST", "/disciplines/create, /disciplines", "CRUD", "Creation de discipline"],
+            ["PUT/DELETE", "/disciplines/{id}", "CRUD", "Modification/Suppression de discipline"],
+            ["GET/POST", "/equipes/create, /equipes", "CRUD", "Creation d'equipe"],
+            ["PUT/DELETE", "/equipes/{id}", "CRUD", "Modification/Suppression d'equipe"],
+            ["GET/POST", "/users/create, /users", "CRUD", "Creation de compte utilisateur"],
+            ["PUT/DELETE", "/users/{id}", "CRUD", "Modification/Suppression de compte"],
+        ]
+    )
+
+    doc.add_heading("6.3. Routes Protegees (Admin + Staff)", level=2)
+    doc.add_paragraph("Ces routes necessitent le role 'admin' ou 'staff' et sont protegees par le middleware 'can.manage' :")
+    add_styled_table(doc,
+        ["Methode HTTP", "URI", "Action", "Description"],
+        [
+            ["GET/POST", "/joueurs/create, /joueurs", "CRUD", "Creation de joueur"],
+            ["GET/PUT", "/joueurs/{id}/edit, /joueurs/{id}", "CRUD", "Modification de joueur"],
+            ["DELETE", "/joueurs/{id}", "CRUD", "Suppression de joueur"],
+            ["GET/POST", "/matchs/create, /matchs", "CRUD", "Programmation de match"],
+            ["GET/PUT", "/matchs/{id}/edit, /matchs/{id}", "CRUD", "Modification de match"],
+            ["DELETE", "/matchs/{id}", "CRUD", "Suppression de match"],
+            ["POST", "/matchs/{id}/score", "Specifique", "Saisie du score et des buteurs d'un match"],
+        ]
+    )
+
+    # --- 7. SECURITE ---
+    doc.add_heading("7. Securite et Controle d'Acces", level=1)
+    doc.add_heading("7.1. Authentification", level=2)
+    doc.add_paragraph("Le systeme d'authentification est base sur Laravel Breeze et offre les fonctionnalites suivantes :")
+    doc.add_paragraph("Connexion par email et mot de passe avec protection contre les attaques par force brute (throttling).", style='List Bullet')
+    doc.add_paragraph("Sessions stockees en base de donnees (table 'sessions') avec duree de vie de 120 minutes.", style='List Bullet')
+    doc.add_paragraph("Token 'Se souvenir de moi' (remember_token) pour les sessions persistantes.", style='List Bullet')
+    doc.add_paragraph("Reinitialisation de mot de passe par email avec token a usage unique.", style='List Bullet')
+    doc.add_paragraph("Deconnexion avec invalidation complete de la session.", style='List Bullet')
+
+    doc.add_heading("7.2. Hashage des Mots de Passe", level=2)
+    doc.add_paragraph("Tous les mots de passe sont hashes avec l'algorithme bcrypt configure a 12 rounds (BCRYPT_ROUNDS=12 dans .env). Aucun mot de passe en clair n'est jamais stocke, affiche ou transmis en reponse HTTP.")
+
+    doc.add_heading("7.3. Protection CSRF", level=2)
+    doc.add_paragraph("Chaque formulaire HTML inclut un token CSRF via la directive Blade @csrf. Le middleware VerifyCsrfToken valide ce token pour toutes les requetes POST, PUT, PATCH et DELETE. En cas d'echec, une erreur HTTP 419 'Page Expired' est retournee.")
+
+    doc.add_heading("7.4. Matrice des Roles et Permissions", level=2)
+    add_styled_table(doc,
+        ["Fonctionnalite", "Admin", "Staff", "Non-authentifie"],
+        [
+            ["Voir le tableau de bord", "Oui", "Oui", "Non (redirige vers login)"],
+            ["Consulter editions, facultes, equipes, joueurs, matchs", "Oui", "Oui", "Non"],
+            ["Consulter les classements et l'arbre du tournoi", "Oui", "Oui", "Non"],
+            ["Creer/Modifier/Supprimer des editions", "Oui", "Non (403 Forbidden)", "Non"],
+            ["Creer/Modifier/Supprimer des facultes", "Oui", "Non", "Non"],
+            ["Creer/Modifier/Supprimer des disciplines", "Oui", "Non", "Non"],
+            ["Creer/Modifier/Supprimer des equipes", "Oui", "Non", "Non"],
+            ["Creer/Modifier/Supprimer des joueurs", "Oui", "Oui", "Non"],
+            ["Programmer/Modifier/Supprimer des matchs", "Oui", "Oui", "Non"],
+            ["Saisir le score d'un match", "Oui", "Oui", "Non"],
+            ["Gerer les comptes utilisateurs", "Oui", "Non", "Non"],
+            ["Modifier son propre profil", "Oui", "Oui", "Non"],
+        ]
+    )
+
+    doc.add_heading("7.5. Validation des Donnees", level=2)
+    doc.add_paragraph("Toutes les donnees envoyees par les formulaires sont validees cote serveur par les controleurs Laravel via la methode $request->validate(). Les regles de validation incluent :")
+    add_styled_table(doc,
+        ["Champ", "Regles de Validation", "Message d'Erreur"],
+        [
+            ["email", "required, email, unique:users", "L'email a deja ete pris / L'email est obligatoire"],
+            ["password", "required, min:8, confirmed", "Le mot de passe doit contenir au moins 8 caracteres"],
+            ["nom (edition/faculte)", "required, string, max:255", "Le nom est obligatoire"],
+            ["date_debut", "required, date", "La date de debut est obligatoire"],
+            ["equipe_a_id", "required, exists:equipes,id, different:equipe_b_id", "Les deux equipes doivent etre differentes"],
+            ["score_a / score_b", "required, integer, min:0", "Le score doit etre un nombre positif ou nul"],
+        ]
+    )
+
+    # --- 8. FRONTEND TECHNIQUE ---
+    doc.add_heading("8. Specifications Techniques Frontend", level=1)
+    doc.add_heading("8.1. Composants Blade Reutilisables", level=2)
+    add_styled_table(doc,
+        ["Composant", "Fichier", "Role"],
+        [
+            ["x-app-layout", "layouts/app.blade.php", "Layout principal avec sidebar, topbar et zone de contenu"],
+            ["x-sidebar", "components/sidebar.blade.php", "Barre laterale de navigation avec liens actifs dynamiques"],
+            ["x-topbar", "components/topbar.blade.php", "Barre superieure avec titre de page, actions et avatar utilisateur"],
+            ["x-input-error", "components/input-error.blade.php", "Affichage des erreurs de validation sous les champs de formulaire"],
+        ]
+    )
+
+    doc.add_heading("8.2. Systeme de Classes CSS Enterprise", level=2)
+    doc.add_paragraph("Le design system UniGames est base sur un ensemble de classes CSS personnalisees definies dans resources/css/app.css :")
+    add_styled_table(doc,
+        ["Classe CSS", "Proprietes Principales", "Usage"],
+        [
+            ["enterprise-card", "bg: white, border-radius: 12px, border: 1px solid slate-200, box-shadow: 0 1px 3px", "Conteneur generique pour cartes, formulaires, tableaux"],
+            ["enterprise-btn-primary", "bg: indigo-600, color: white, padding: 10px 20px, border-radius: 8px, hover: indigo-700", "Boutons d'action principale (Creer, Enregistrer)"],
+            ["enterprise-btn-secondary", "bg: transparent, border: slate-200, color: slate-700, hover: slate-50", "Boutons secondaires (Annuler, Retour)"],
+            ["enterprise-input", "border: slate-200, bg: slate-50, focus: border-indigo, height: 42px, transition: 150ms", "Champs de saisie de formulaire"],
+            ["enterprise-label", "text-transform: uppercase, font-size: 11px, font-weight: bold, letter-spacing: widest", "Labels de formulaire"],
+        ]
+    )
+
+    doc.add_heading("8.3. Interactions Alpine.js", level=2)
+    doc.add_paragraph("Alpine.js est utilise pour 3 types d'interactions cote client :")
+    doc.add_paragraph("Recherche en temps reel : Les listes de donnees (joueurs, equipes, matchs) integrent un champ x-model='search' lie a un filtre x-show qui masque dynamiquement les lignes ne correspondant pas a la saisie.", style='List Bullet')
+    doc.add_paragraph("Accordeons : Les panneaux de discipline sur la page des matchs utilisent x-data='{open: false}' et @click='open = !open' pour replier/deplier les sections.", style='List Bullet')
+    doc.add_paragraph("Formulaire dynamique de buteurs : Le formulaire de saisie de score utilise x-data avec un tableau reactif de buteurs. Les fonctions addButeur() et removeButeur() permettent d'ajouter/retirer des lignes sans rechargement de page.", style='List Bullet')
+
+    # --- 9. ENVIRONNEMENT DE DEPLOIEMENT ---
+    doc.add_heading("9. Environnement de Deploiement", level=1)
+    doc.add_heading("9.1. Configuration Serveur Requise", level=2)
+    add_styled_table(doc,
+        ["Composant", "Specification Minimale", "Recommandation"],
+        [
+            ["Systeme d'exploitation", "Windows 10 / Ubuntu 20.04 / macOS 12+", "Ubuntu 22.04 LTS en production"],
+            ["PHP", "8.2+", "8.3 pour les performances optimales"],
+            ["MySQL", "8.0+", "8.0.33+ avec InnoDB"],
+            ["Node.js", "18+", "20 LTS"],
+            ["RAM", "2 Go minimum", "4 Go recommande"],
+            ["Disque", "500 Mo pour l'application", "SSD recommande pour la base de donnees"],
+        ]
+    )
+
+    doc.add_heading("9.2. Variables d'Environnement Critiques", level=2)
+    add_styled_table(doc,
+        ["Variable", "Valeur Dev", "Valeur Production", "Description"],
+        [
+            ["APP_ENV", "local", "production", "Environnement d'execution"],
+            ["APP_DEBUG", "true", "false", "Affichage des erreurs detaillees (JAMAIS true en production)"],
+            ["APP_KEY", "base64:...", "base64:...", "Cle de chiffrement (generee par php artisan key:generate)"],
+            ["APP_URL", "http://localhost:8001", "https://votre-domaine.com", "URL de base de l'application"],
+            ["DB_CONNECTION", "mysql", "mysql", "Pilote de base de donnees"],
+            ["DB_HOST", "127.0.0.1", "adresse-serveur-db", "Adresse du serveur MySQL"],
+            ["DB_DATABASE", "unigames", "unigames", "Nom de la base de donnees"],
+            ["BCRYPT_ROUNDS", "12", "12", "Nombre de rounds de hachage bcrypt"],
+            ["SESSION_DRIVER", "database", "database", "Stockage des sessions"],
+            ["SESSION_LIFETIME", "120", "120", "Duree de vie des sessions en minutes"],
+        ]
+    )
+
+    doc.add_heading("9.3. Commandes de Deploiement", level=2)
+    doc.add_paragraph("Procedure de mise en production :")
+    doc.add_paragraph("1. git clone https://github.com/Johnny-jonnes/Unigames_Laravel.git", style='List Number')
+    doc.add_paragraph("2. cd Unigames_Laravel && composer install --optimize-autoloader --no-dev", style='List Number')
+    doc.add_paragraph("3. npm install && npm run build", style='List Number')
+    doc.add_paragraph("4. cp .env.example .env && php artisan key:generate", style='List Number')
+    doc.add_paragraph("5. Configurer les variables DB_* dans le fichier .env", style='List Number')
+    doc.add_paragraph("6. php artisan migrate --force", style='List Number')
+    doc.add_paragraph("7. php artisan config:cache && php artisan route:cache && php artisan view:cache", style='List Number')
+    doc.add_paragraph("8. Configurer le serveur web (Apache/Nginx) pour pointer vers le dossier /public", style='List Number')
+
+    doc.save("docs/4_Specifications_Fonctionnelles_et_Techniques.docx")
+    print("[OK] 4_Specifications_Fonctionnelles_et_Techniques.docx")
 
 # ============================================================
 # DOCUMENT 5 : GUIDE D'INSTALLATION

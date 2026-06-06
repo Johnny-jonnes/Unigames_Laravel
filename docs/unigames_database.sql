@@ -1,4 +1,4 @@
--- MySQL dump 10.13  Distrib 8.0.44, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.44, pour Win64 (x86_64)
 --
 -- Hôte : localhost    Base de données : unigames
 -- ------------------------------------------------------
