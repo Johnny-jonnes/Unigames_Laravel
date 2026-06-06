@@ -1644,6 +1644,671 @@ def add_screenshots(doc, title="Captures d'Ecran"):
                 print(f"Erreur lors de l'ajout de l'image {img}: {e}")
 
 # ============================================================
+# DOCUMENT 8 : GUIDE D'ADMINISTRATION
+# ============================================================
+def create_guide_administration():
+    doc = Document()
+    setup_document(doc)
+    add_cover_page(doc, "Guide d'Administration", "Procedures Completes de Gestion, Maintenance et Exploitation de la Plateforme UniGames", "1.0")
+    add_toc_placeholder(doc)
+
+    # --- 1. INTRODUCTION ---
+    doc.add_heading("1. Introduction", level=1)
+    doc.add_paragraph("Ce guide est destine aux administrateurs de la plateforme UniGames. Il decrit l'ensemble des procedures d'administration, de maintenance, de sauvegarde et de surveillance necessaires au bon fonctionnement de l'application en environnement de production ou de developpement.")
+    doc.add_heading("1.1. Public Cible", level=2)
+    doc.add_paragraph("Ce document s'adresse aux personnes disposant du role 'admin' dans la plateforme UniGames. Ces utilisateurs ont un acces complet a toutes les fonctionnalites de gestion, y compris la creation et la suppression de donnees structurelles (editions, facultes, disciplines, equipes) ainsi que la gestion des comptes utilisateurs.")
+    doc.add_heading("1.2. Conventions", level=2)
+    doc.add_paragraph("Les commandes a executer en terminal sont prefixees par le symbole $.", style='List Bullet')
+    doc.add_paragraph("Les chemins de fichiers sont indiques en reference au dossier racine du projet.", style='List Bullet')
+    doc.add_paragraph("Les actions dans l'interface web sont decrites sous forme de parcours etape par etape.", style='List Bullet')
+
+    # --- 2. ACCES ADMINISTRATEUR ---
+    doc.add_heading("2. Acces Administrateur", level=1)
+    doc.add_heading("2.1. Connexion Initiale", level=2)
+    doc.add_paragraph("Apres l'installation, un compte administrateur par defaut est disponible :")
+    add_styled_table(doc,
+        ["Parametre", "Valeur"],
+        [
+            ["URL", "http://localhost:8001"],
+            ["Email", "admin@unigames.com"],
+            ["Mot de passe", "password"],
+            ["Role", "admin"],
+        ]
+    )
+    doc.add_paragraph("IMPORTANT : Il est imperatif de changer le mot de passe par defaut des la premiere connexion via la page Profil.")
+
+    doc.add_heading("2.2. Droits et Privileges de l'Administrateur", level=2)
+    doc.add_paragraph("L'administrateur dispose de droits etendus par rapport au role 'staff' :")
+    add_styled_table(doc,
+        ["Domaine", "Droits Admin", "Droits Staff"],
+        [
+            ["Editions", "Creer, Modifier, Supprimer, Consulter", "Consulter uniquement"],
+            ["Facultes", "Creer, Modifier, Supprimer, Consulter", "Consulter uniquement"],
+            ["Disciplines", "Creer, Modifier, Supprimer, Consulter", "Consulter uniquement"],
+            ["Equipes", "Creer, Modifier, Supprimer, Consulter", "Consulter uniquement"],
+            ["Joueurs", "Creer, Modifier, Supprimer, Consulter", "Creer, Modifier, Supprimer, Consulter"],
+            ["Matchs", "Creer, Modifier, Supprimer, Saisir Score", "Creer, Modifier, Supprimer, Saisir Score"],
+            ["Comptes Utilisateurs", "Creer, Modifier, Supprimer, Consulter", "Aucun acces"],
+            ["Tableau de Bord", "Acces complet", "Acces complet"],
+            ["Classements", "Acces complet", "Acces complet"],
+            ["Arbre du Tournoi", "Acces complet", "Acces complet"],
+            ["Profil Personnel", "Modifier son profil", "Modifier son profil"],
+        ]
+    )
+
+    # --- 3. GESTION DES EDITIONS ---
+    doc.add_heading("3. Gestion du Cycle de Vie des Editions", level=1)
+    doc.add_heading("3.1. Creer une Nouvelle Edition", level=2)
+    doc.add_paragraph("Parcours : Menu lateral > Editions > Bouton '+ Nouvelle Edition'")
+    doc.add_paragraph("1. Saisir le nom de l'edition (ex: 'Edition 2027 - Conakry').", style='List Number')
+    doc.add_paragraph("2. Definir les dates de debut et de fin du tournoi.", style='List Number')
+    doc.add_paragraph("3. Indiquer le lieu principal (optionnel).", style='List Number')
+    doc.add_paragraph("4. Ajouter une description (optionnel).", style='List Number')
+    doc.add_paragraph("5. Selectionner le statut initial : 'A venir' (recommande pour une nouvelle edition).", style='List Number')
+    doc.add_paragraph("6. Cliquer sur 'Enregistrer'.", style='List Number')
+
+    doc.add_heading("3.2. Cycle de Vie d'une Edition", level=2)
+    doc.add_paragraph("Chaque edition suit un cycle de vie strict en trois etapes :")
+    add_styled_table(doc,
+        ["Statut", "Badge", "Signification", "Actions Autorisees"],
+        [
+            ["a_venir", "Bleu", "L'edition est planifiee mais n'a pas encore commence.", "Creer des facultes, equipes, joueurs. Programmer des matchs. Modifier ou supprimer l'edition."],
+            ["en_cours", "Jaune/Orange", "Le tournoi est en cours de deroulement.", "Programmer de nouveaux matchs. Saisir les scores. Ajouter des joueurs. Modifier l'edition."],
+            ["terminee", "Vert", "Tous les matchs sont termines. L'edition est archivee.", "Consultation uniquement. Impossible de programmer de nouveaux matchs ou d'ajouter des equipes."],
+        ]
+    )
+    doc.add_paragraph("Procedure de changement de statut : Menu lateral > Editions > Cliquer 'Modifier' sur l'edition > Changer le champ 'Statut' > Enregistrer.")
+
+    doc.add_heading("3.3. Supprimer une Edition", level=2)
+    doc.add_paragraph("ATTENTION : La suppression d'une edition est une action irreversible qui entraine la suppression en cascade de toutes les donnees associees :")
+    doc.add_paragraph("Toutes les facultes rattachees a cette edition", style='List Bullet')
+    doc.add_paragraph("Toutes les equipes inscrites a cette edition", style='List Bullet')
+    doc.add_paragraph("Tous les joueurs de ces equipes", style='List Bullet')
+    doc.add_paragraph("Tous les matchs programmes pour cette edition", style='List Bullet')
+    doc.add_paragraph("Procedure : Menu lateral > Editions > Bouton rouge 'Supprimer' > Confirmer dans la boite de dialogue.")
+
+    # --- 4. GESTION DES FACULTES ---
+    doc.add_heading("4. Administration des Facultes", level=1)
+    doc.add_heading("4.1. Ajouter une Faculte", level=2)
+    doc.add_paragraph("Parcours : Menu lateral > Facultes > Bouton '+ Nouvelle Faculte'")
+    doc.add_paragraph("Remplir les champs suivants :")
+    doc.add_paragraph("Nom : Nom complet de l'etablissement (ex: 'Universite Gamal Abdel Nasser de Conakry'). Obligatoire.", style='List Bullet')
+    doc.add_paragraph("Logo : Uploader une image representant l'etablissement. Si aucun logo n'est fourni, le systeme genere automatiquement des initiales stylisees.", style='List Bullet')
+    doc.add_paragraph("Couleur : Selecteur de couleur pour identifier visuellement la faculte dans les badges et graphiques.", style='List Bullet')
+
+    doc.add_heading("4.2. Modifier ou Supprimer une Faculte", level=2)
+    doc.add_paragraph("Modifier : Depuis la liste des facultes, cliquer le bouton bleu 'Modifier'. Le formulaire est pre-rempli avec les donnees actuelles.")
+    doc.add_paragraph("Supprimer : Bouton rouge 'Supprimer'. ATTENTION : Supprime egalement toutes les equipes rattachees a cette faculte et leurs joueurs.")
+
+    # --- 5. GESTION DES DISCIPLINES ---
+    doc.add_heading("5. Administration des Disciplines Sportives", level=1)
+    doc.add_heading("5.1. Ajouter une Discipline", level=2)
+    doc.add_paragraph("Parcours : Menu lateral > Disciplines > Bouton '+ Nouvelle Discipline'")
+    doc.add_paragraph("Champs a remplir :")
+    doc.add_paragraph("Nom : Nom du sport (ex: 'Football', 'Basketball', 'Volleyball', 'Handball'). Obligatoire.", style='List Bullet')
+    doc.add_paragraph("Type : Type de sport (collectif ou individuel). Optionnel.", style='List Bullet')
+    doc.add_paragraph("Nombre de joueurs : Nombre de joueurs par equipe pour cette discipline. Optionnel.", style='List Bullet')
+
+    doc.add_heading("5.2. Impact sur les Equipes et Matchs", level=2)
+    doc.add_paragraph("Chaque discipline est liee aux equipes et aux matchs. Modifier le nom d'une discipline se repercute sur toutes les pages ou elle apparait (matchs, classements, arbre du tournoi). Supprimer une discipline supprime egalement toutes les equipes et matchs associes.")
+
+    # --- 6. GESTION DES EQUIPES ET JOUEURS ---
+    doc.add_heading("6. Administration des Equipes et Joueurs", level=1)
+    doc.add_heading("6.1. Inscrire une Equipe", level=2)
+    doc.add_paragraph("Parcours : Menu lateral > Equipes > Bouton '+ Nouvelle Equipe'")
+    doc.add_paragraph("Regles de gestion importantes :")
+    doc.add_paragraph("Une faculte ne peut inscrire qu'UNE SEULE equipe par discipline et par edition. Si un doublon est detecte, le systeme refuse la creation.", style='List Bullet')
+    doc.add_paragraph("L'edition ne doit pas etre au statut 'terminee' pour permettre l'inscription.", style='List Bullet')
+    doc.add_paragraph("Le nom de l'equipe est generalement compose du nom de la faculte et de la discipline (ex: 'UGANC Football').", style='List Bullet')
+
+    doc.add_heading("6.2. Gerer les Joueurs d'une Equipe", level=2)
+    doc.add_paragraph("Les joueurs peuvent etre ajoutes, modifies ou supprimes par les administrateurs ET les membres du staff.")
+    doc.add_paragraph("Ajouter un joueur : Menu lateral > Joueurs > '+ Nouveau Joueur'. Renseigner nom, prenom, sexe (M/F), equipe et numero de maillot.", style='List Bullet')
+    doc.add_paragraph("Modifier un joueur : Bouton bleu 'Modifier' dans la liste. Tous les champs sont modifiables sauf le compteur de buts (gere automatiquement).", style='List Bullet')
+    doc.add_paragraph("Supprimer un joueur : Bouton rouge 'Supprimer'. Action irreversible. Le compteur de buts du joueur est perdu.", style='List Bullet')
+
+    doc.add_heading("6.3. Compteur de Buts", level=2)
+    doc.add_paragraph("Le champ 'buts' de chaque joueur est incremente automatiquement lors de la saisie du score d'un match. Ce compteur n'est PAS decremente si un match est modifie ou supprime. Il s'agit d'un compteur cumulatif unidirectionnel.")
+
+    # --- 7. GESTION DES MATCHS ---
+    doc.add_heading("7. Administration des Matchs", level=1)
+    doc.add_heading("7.1. Programmer un Match", level=2)
+    doc.add_paragraph("Parcours : Menu lateral > Matchs > Bouton '+ Programmer un match'")
+    doc.add_paragraph("Verifications automatiques effectuees par le systeme :")
+    doc.add_paragraph("L'edition selectionnee ne doit pas etre 'terminee'.", style='List Bullet')
+    doc.add_paragraph("Les deux equipes selectionnees doivent etre differentes.", style='List Bullet')
+    doc.add_paragraph("Tous les champs obligatoires doivent etre remplis (edition, discipline, equipes, date, phase).", style='List Bullet')
+
+    doc.add_heading("7.2. Saisir un Score", level=2)
+    doc.add_paragraph("La saisie du score est l'operation la plus critique de la plateforme. Procedure detaillee :")
+    doc.add_paragraph("1. Acceder a la fiche du match planifie (cliquer sur le match dans le calendrier).", style='List Number')
+    doc.add_paragraph("2. Saisir le score de l'Equipe A et de l'Equipe B dans les champs numeriques.", style='List Number')
+    doc.add_paragraph("3. Dans la section 'Buteurs Equipe A', cliquer '+ Ajouter un buteur' pour chaque buteur.", style='List Number')
+    doc.add_paragraph("4. Selectionner le joueur dans la liste deroulante (filtree par equipe).", style='List Number')
+    doc.add_paragraph("5. Indiquer le nombre de buts marques par ce joueur.", style='List Number')
+    doc.add_paragraph("6. Repeter les etapes 3-5 pour les buteurs de l'Equipe B.", style='List Number')
+    doc.add_paragraph("7. Cliquer sur 'Enregistrer le resultat final'.", style='List Number')
+    doc.add_paragraph("Consequences automatiques de la saisie :")
+    doc.add_paragraph("Le statut du match passe de 'planifie' a 'joue'.", style='List Bullet')
+    doc.add_paragraph("Les scores sont enregistres dans les champs score_a et score_b.", style='List Bullet')
+    doc.add_paragraph("Les buteurs sont stockes au format JSON dans le champ 'buteurs'.", style='List Bullet')
+    doc.add_paragraph("Le compteur de buts de chaque joueur concerne est incremente.", style='List Bullet')
+    doc.add_paragraph("Les classements sont recalcules automatiquement.", style='List Bullet')
+
+    doc.add_heading("7.3. Modifier ou Annuler un Match", level=2)
+    doc.add_paragraph("Modifier : Le bouton 'Modifier' permet de changer la date, le lieu ou la phase d'un match. Si le match est deja joue, les scores peuvent etre corriges mais les compteurs de buts des joueurs ne sont pas ajustes retroactivement.")
+    doc.add_paragraph("Supprimer : La suppression d'un match joue ne decremente pas les compteurs de buts. Utilisez cette operation avec precaution.")
+
+    # --- 8. GESTION DES COMPTES UTILISATEURS ---
+    doc.add_heading("8. Gestion des Comptes Utilisateurs", level=1)
+    doc.add_heading("8.1. Creer un Compte Staff", level=2)
+    doc.add_paragraph("Parcours : Menu lateral > Gestion Staff > Bouton '+ Nouveau Utilisateur'")
+    doc.add_paragraph("Remplir les champs suivants :")
+    add_styled_table(doc,
+        ["Champ", "Type", "Obligatoire", "Regles"],
+        [
+            ["Nom", "Texte", "Oui", "Max 255 caracteres"],
+            ["Email", "Email", "Oui", "Doit etre unique dans la base. Servira d'identifiant de connexion."],
+            ["Mot de passe", "Mot de passe", "Oui", "Minimum 8 caracteres. Sera hashe en bcrypt (12 rounds)."],
+            ["Confirmation", "Mot de passe", "Oui", "Doit correspondre exactement au mot de passe."],
+            ["Role", "Selection", "Oui", "'admin' (acces total) ou 'staff' (acces limite aux donnees operationnelles)."],
+        ]
+    )
+
+    doc.add_heading("8.2. Modifier un Compte", level=2)
+    doc.add_paragraph("Depuis la page Gestion Staff, cliquer le bouton 'Modifier' a cote du compte concerne.")
+    doc.add_paragraph("L'administrateur peut modifier : le nom, l'email et le role de l'utilisateur.", style='List Bullet')
+    doc.add_paragraph("Pour reinitialiser le mot de passe : saisir un nouveau mot de passe dans le champ dedie. Laisser vide pour ne pas modifier le mot de passe actuel.", style='List Bullet')
+    doc.add_paragraph("Le changement de role prend effet immediatement. Un utilisateur dont le role passe de 'admin' a 'staff' perd instantanement l'acces aux fonctionnalites d'administration.", style='List Bullet')
+
+    doc.add_heading("8.3. Supprimer un Compte", level=2)
+    doc.add_paragraph("La suppression d'un compte utilisateur est irreversible. L'utilisateur concerne ne pourra plus se connecter.")
+    doc.add_paragraph("ATTENTION : Ne supprimez jamais le dernier compte administrateur, car vous perdriez l'acces aux fonctionnalites d'administration.")
+
+    # --- 9. CLASSEMENTS ET ARBRE DU TOURNOI ---
+    doc.add_heading("9. Supervision des Classements et du Tournoi", level=1)
+    doc.add_heading("9.1. Classements Automatiques", level=2)
+    doc.add_paragraph("Les classements sont calcules dynamiquement a chaque consultation de la page. Aucune intervention manuelle n'est necessaire. Le systeme applique les regles suivantes :")
+    doc.add_paragraph("Victoire = 3 points, Match nul = 1 point, Defaite = 0 point.", style='List Bullet')
+    doc.add_paragraph("Tri principal par points decroissants.", style='List Bullet')
+    doc.add_paragraph("Tri secondaire par difference de buts (Buts Marques - Buts Encaisses) en cas d'egalite de points.", style='List Bullet')
+    doc.add_paragraph("Le top 10 des meilleurs buteurs est affiche en dessous du classement, toutes disciplines confondues.", style='List Bullet')
+
+    doc.add_heading("9.2. Arbre du Tournoi", level=2)
+    doc.add_paragraph("L'arbre du tournoi est genere automatiquement a partir des matchs programmes pour chaque discipline. Il affiche les phases dans l'ordre : Poules > Quarts de Finale > Demi-Finales > Petite Finale > Grande Finale.")
+    doc.add_paragraph("Les matchs joues affichent le score et mettent en evidence le vainqueur. La grande finale est mise en valeur avec un design dore premium.")
+    doc.add_paragraph("L'arbre est en lecture seule. Pour modifier les resultats, passez par la fiche du match correspondant.")
+
+    # --- 10. MAINTENANCE ET SAUVEGARDE ---
+    doc.add_heading("10. Maintenance et Sauvegarde", level=1)
+    doc.add_heading("10.1. Sauvegarde de la Base de Donnees", level=2)
+    doc.add_paragraph("Il est imperatif de sauvegarder regulierement la base de donnees, en particulier avant et apres chaque edition du tournoi.")
+    doc.add_paragraph("Commande de sauvegarde :")
+    doc.add_paragraph("$ mysqldump -u root -p unigames > backup_unigames_$(date +%Y%m%d).sql")
+    doc.add_paragraph("Commande de restauration :")
+    doc.add_paragraph("$ mysql -u root -p unigames < backup_unigames_20260606.sql")
+    doc.add_paragraph("Frequence recommandee : Quotidienne pendant un tournoi actif, hebdomadaire en periode d'inactivite.")
+
+    doc.add_heading("10.2. Sauvegarde du Code Source", level=2)
+    doc.add_paragraph("Le code source est versionne sur GitHub. S'assurer que toutes les modifications sont regulierement commitees et poussees :")
+    doc.add_paragraph("$ git add .")
+    doc.add_paragraph("$ git commit -m 'description des modifications'")
+    doc.add_paragraph("$ git push origin main")
+
+    doc.add_heading("10.3. Maintenance du Serveur Laravel", level=2)
+    doc.add_paragraph("Commandes utiles pour la maintenance de l'application :")
+    add_styled_table(doc,
+        ["Commande", "Description", "Quand l'Utiliser"],
+        [
+            ["php artisan cache:clear", "Vide le cache de l'application", "Apres une modification de configuration ou en cas de comportement inattendu"],
+            ["php artisan config:clear", "Recharge la configuration depuis les fichiers", "Apres modification du fichier .env"],
+            ["php artisan route:clear", "Recharge les routes", "Apres ajout ou modification de routes"],
+            ["php artisan view:clear", "Recompile les vues Blade", "Apres modification des fichiers de template"],
+            ["php artisan migrate", "Execute les migrations en attente", "Apres une mise a jour du code incluant de nouvelles migrations"],
+            ["php artisan migrate:status", "Affiche l'etat de chaque migration", "Pour verifier que toutes les migrations ont ete executees"],
+            ["php artisan optimize", "Optimise l'application pour la production", "Avant le deploiement en production"],
+        ]
+    )
+
+    doc.add_heading("10.4. Mise a Jour de l'Application", level=2)
+    doc.add_paragraph("Procedure de mise a jour depuis le depot Git :")
+    doc.add_paragraph("1. $ git pull origin main", style='List Number')
+    doc.add_paragraph("2. $ composer install (si composer.lock a change)", style='List Number')
+    doc.add_paragraph("3. $ npm install && npm run build (si package.json a change)", style='List Number')
+    doc.add_paragraph("4. $ php artisan migrate (si de nouvelles migrations existent)", style='List Number')
+    doc.add_paragraph("5. $ php artisan cache:clear && php artisan config:clear", style='List Number')
+    doc.add_paragraph("6. Tester l'application apres la mise a jour.", style='List Number')
+
+    # --- 11. DEPANNAGE ---
+    doc.add_heading("11. Guide de Depannage", level=1)
+    add_styled_table(doc,
+        ["Probleme", "Cause Probable", "Solution"],
+        [
+            ["Page blanche apres connexion", "Le serveur Vite n'est pas demarre", "Ouvrir un second terminal et executer : npm run dev"],
+            ["Erreur 500 Internal Server Error", "Fichier .env mal configure ou migration manquante", "1. Verifier les parametres DB_* dans .env\\n2. Executer php artisan migrate\\n3. Verifier les logs dans storage/logs/laravel.log"],
+            ["Erreur 419 Page Expired", "Token CSRF expire ou invalide", "Executer : php artisan cache:clear puis recharger la page"],
+            ["Erreur 403 Forbidden", "L'utilisateur n'a pas les droits suffisants", "Verifier le role de l'utilisateur dans Gestion Staff. S'assurer qu'il a le role 'admin' si l'action le requiert."],
+            ["Erreur 'Column not found'", "Migration non executee", "Executer : php artisan migrate"],
+            ["Mot de passe oublie (admin)", "Perte du mot de passe administrateur", "1. Acceder a la page 'Mot de passe oublie'\\n2. Ou modifier directement en base : UPDATE users SET password='' WHERE email='admin@unigames.com' puis utiliser php artisan tinker pour re-hasher"],
+            ["Les classements ne s'affichent pas", "Aucun match joue dans l'edition selectionnee", "S'assurer qu'au moins un match a le statut 'joue' pour l'edition et la discipline selectionnees"],
+            ["Les images/styles ne s'affichent pas", "Assets non compiles", "Executer : npm run dev (developpement) ou npm run build (production)"],
+            ["Impossible de programmer un match", "L'edition est au statut 'terminee'", "Changer le statut de l'edition a 'en_cours' via le formulaire de modification"],
+            ["Erreur 'SQLSTATE Connection refused'", "MySQL n'est pas demarre", "Demarrer le service MySQL : net start MySQL80 (Windows) ou sudo service mysql start (Linux)"],
+        ]
+    )
+
+    # --- 12. BONNES PRATIQUES ---
+    doc.add_heading("12. Bonnes Pratiques d'Administration", level=1)
+    doc.add_paragraph("1. Sauvegardes regulieres : Effectuer une sauvegarde de la base de donnees avant chaque journee de competition et avant toute modification structurelle (suppression d'edition, de faculte, etc.).", style='List Number')
+    doc.add_paragraph("2. Gestion des comptes : Creer un compte 'staff' pour chaque collaborateur plutot que de partager le compte admin. Cela permet la tracabilite et limite les risques.", style='List Number')
+    doc.add_paragraph("3. Verification post-saisie : Apres la saisie du score d'un match, verifier immediatement que le classement a ete mis a jour correctement et que les buteurs sont bien attribues.", style='List Number')
+    doc.add_paragraph("4. Changement de mot de passe : Changer le mot de passe du compte admin par defaut immediatement apres l'installation initiale.", style='List Number')
+    doc.add_paragraph("5. Surveillance des logs : Consulter regulierement le fichier storage/logs/laravel.log pour detecter d'eventuelles erreurs ou tentatives d'acces non autorisees.", style='List Number')
+    doc.add_paragraph("6. Archivage des editions : Passer le statut d'une edition a 'terminee' des que tous les matchs sont joues pour eviter toute modification accidentelle.", style='List Number')
+    doc.add_paragraph("7. Tests apres mise a jour : Apres chaque mise a jour du code, tester les fonctionnalites critiques (connexion, saisie de score, classements) avant de valider la mise en production.", style='List Number')
+
+    doc.save("docs/10_Guide_Administration.docx")
+    print("[OK] 10_Guide_Administration.docx")
+
+# ============================================================
+# DOCUMENT 9 : DOCUMENTATION TECHNIQUE
+# ============================================================
+def create_documentation_technique():
+    doc = Document()
+    setup_document(doc)
+    add_cover_page(doc, "Documentation Technique", "Reference Technique Complete : Code Source, Modeles, Controleurs, Vues et Configuration", "1.0")
+    add_toc_placeholder(doc)
+
+    # --- 1. INTRODUCTION ---
+    doc.add_heading("1. Introduction et Vue d'Ensemble", level=1)
+    doc.add_paragraph("Ce document constitue la reference technique exhaustive de la plateforme UniGames. Il est destine aux developpeurs et techniciens charges de la maintenance, de l'evolution et du deploiement de l'application.")
+    doc.add_paragraph("UniGames est une application web monolithique construite avec le framework Laravel (PHP 8.2+), suivant le patron d'architecture MVC (Model-View-Controller). L'interface utilisateur est rendue cote serveur par le moteur de templates Blade, enrichi par Tailwind CSS pour le style et Alpine.js pour les interactions client legeres.")
+
+    doc.add_heading("1.1. Arborescence du Projet", level=2)
+    doc.add_paragraph("UniGames_Laravel/")
+    doc.add_paragraph("├── app/                      # Code source de l'application")
+    doc.add_paragraph("│   ├── Http/")
+    doc.add_paragraph("│   │   ├── Controllers/       # Controleurs (logique metier)")
+    doc.add_paragraph("│   │   └── Middleware/         # Middlewares (filtres de requetes)")
+    doc.add_paragraph("│   └── Models/                # Modeles Eloquent (entites)")
+    doc.add_paragraph("├── bootstrap/                 # Fichiers d'amorcage Laravel")
+    doc.add_paragraph("├── config/                    # Fichiers de configuration")
+    doc.add_paragraph("├── database/")
+    doc.add_paragraph("│   ├── migrations/            # Scripts de creation/modification des tables")
+    doc.add_paragraph("│   └── seeders/               # Scripts de peuplement de la base")
+    doc.add_paragraph("├── docs/                      # Documentation du projet")
+    doc.add_paragraph("├── lang/                      # Fichiers de traduction (francais)")
+    doc.add_paragraph("├── public/                    # Point d'entree web (index.php, assets)")
+    doc.add_paragraph("├── resources/")
+    doc.add_paragraph("│   ├── css/                   # Fichiers CSS source (app.css)")
+    doc.add_paragraph("│   ├── js/                    # Fichiers JavaScript source (app.js)")
+    doc.add_paragraph("│   └── views/                 # Templates Blade (.blade.php)")
+    doc.add_paragraph("├── routes/                    # Definitions des routes")
+    doc.add_paragraph("│   └── web.php                # Routes web principales")
+    doc.add_paragraph("├── storage/                   # Fichiers generes (logs, cache, sessions)")
+    doc.add_paragraph("├── tests/                     # Tests automatises")
+    doc.add_paragraph("├── .env                       # Configuration d'environnement (non versionne)")
+    doc.add_paragraph("├── composer.json              # Dependances PHP")
+    doc.add_paragraph("├── package.json               # Dependances Node.js")
+    doc.add_paragraph("├── tailwind.config.js         # Configuration Tailwind CSS")
+    doc.add_paragraph("└── vite.config.js             # Configuration Vite (bundler)")
+
+    # --- 2. MODELES ELOQUENT ---
+    doc.add_heading("2. Modeles Eloquent (Couche Donnees)", level=1)
+
+    doc.add_heading("2.1. Modele User (app/Models/User.php)", level=2)
+    doc.add_paragraph("Le modele User represente un utilisateur de la plateforme. Il etend Authenticatable et utilise les traits HasFactory et Notifiable fournis par Laravel.")
+    add_styled_table(doc,
+        ["Propriete/Methode", "Type", "Description"],
+        [
+            ["$fillable", "array", "['name', 'email', 'password', 'role'] - Champs assignables en masse"],
+            ["$hidden", "array", "['password', 'remember_token'] - Champs masques dans les serialisations JSON"],
+            ["$casts", "array", "['email_verified_at' => 'datetime', 'password' => 'hashed'] - Conversions de types automatiques"],
+            ["role", "string", "Valeurs possibles : 'admin' ou 'staff'. Determine les droits d'acces de l'utilisateur."],
+        ]
+    )
+
+    doc.add_heading("2.2. Modele Edition (app/Models/Edition.php)", level=2)
+    add_styled_table(doc,
+        ["Propriete/Methode", "Type", "Description"],
+        [
+            ["$fillable", "array", "['nom', 'date_debut', 'date_fin', 'lieu', 'description', 'statut']"],
+            ["equipes()", "HasMany", "Retourne toutes les equipes inscrites a cette edition"],
+            ["matchs()", "HasMany", "Retourne tous les matchs programmes pour cette edition"],
+            ["facultes()", "HasMany", "Retourne toutes les facultes inscrites a cette edition"],
+        ]
+    )
+
+    doc.add_heading("2.3. Modele Faculte (app/Models/Faculte.php)", level=2)
+    add_styled_table(doc,
+        ["Propriete/Methode", "Type", "Description"],
+        [
+            ["$fillable", "array", "['nom', 'logo', 'couleur', 'edition_id']"],
+            ["edition()", "BelongsTo", "Retourne l'edition de rattachement"],
+            ["equipes()", "HasMany", "Retourne toutes les equipes de cette faculte"],
+        ]
+    )
+
+    doc.add_heading("2.4. Modele Discipline (app/Models/Discipline.php)", level=2)
+    add_styled_table(doc,
+        ["Propriete/Methode", "Type", "Description"],
+        [
+            ["$fillable", "array", "['nom', 'type', 'nb_joueurs']"],
+            ["equipes()", "HasMany", "Retourne toutes les equipes pratiquant cette discipline"],
+            ["matchs()", "HasMany", "Retourne tous les matchs de cette discipline"],
+        ]
+    )
+
+    doc.add_heading("2.5. Modele Equipe (app/Models/Equipe.php)", level=2)
+    doc.add_paragraph("Le modele Equipe est le plus riche du systeme, avec de nombreux accesseurs calcules pour les statistiques :")
+    add_styled_table(doc,
+        ["Propriete/Methode", "Type", "Description"],
+        [
+            ["$fillable", "array", "['nom', 'faculte_id', 'discipline_id', 'edition_id']"],
+            ["faculte()", "BelongsTo", "Retourne la faculte representee"],
+            ["discipline()", "BelongsTo", "Retourne la discipline pratiquee"],
+            ["edition()", "BelongsTo", "Retourne l'edition du tournoi"],
+            ["joueurs()", "HasMany", "Retourne tous les joueurs de l'equipe"],
+            ["matchsAsA()", "HasMany", "Retourne les matchs ou l'equipe joue en tant qu'equipe A (domicile)"],
+            ["matchsAsB()", "HasMany", "Retourne les matchs ou l'equipe joue en tant qu'equipe B (exterieur)"],
+            ["getPointsAttribute()", "Accesseur", "Calcule : Victoires * 3 + Nuls * 1"],
+            ["getMatchsJouesAttribute()", "Accesseur", "Compte les matchs au statut 'joue' impliquant cette equipe"],
+            ["getVictoiresAttribute()", "Accesseur", "Compte les matchs gagnes (score superieur a l'adversaire)"],
+            ["getNulsAttribute()", "Accesseur", "Compte les matchs ou les deux scores sont egaux"],
+            ["getDefaitesAttribute()", "Accesseur", "Compte les matchs perdus (score inferieur a l'adversaire)"],
+            ["getButsMarquesAttribute()", "Accesseur", "Somme des scores obtenus par cette equipe dans tous ses matchs"],
+            ["getButsEncaissesAttribute()", "Accesseur", "Somme des scores obtenus par les adversaires dans tous ses matchs"],
+            ["getDifferenceButs()", "Methode", "Retourne buts_marques - buts_encaisses"],
+        ]
+    )
+
+    doc.add_heading("2.6. Modele Joueur (app/Models/Joueur.php)", level=2)
+    add_styled_table(doc,
+        ["Propriete/Methode", "Type", "Description"],
+        [
+            ["$fillable", "array", "['nom', 'prenom', 'sexe', 'equipe_id', 'numero_maillot', 'buts']"],
+            ["equipe()", "BelongsTo", "Retourne l'equipe d'appartenance du joueur"],
+        ]
+    )
+    doc.add_paragraph("Le champ 'buts' a une valeur par defaut de 0 et est incremente automatiquement lors de la saisie du score d'un match.")
+
+    doc.add_heading("2.7. Modele Match_ (app/Models/Match_.php)", level=2)
+    doc.add_paragraph("Note : Le nom 'Match_' (avec underscore) est utilise car 'match' est un mot reserve en PHP.")
+    add_styled_table(doc,
+        ["Propriete/Methode", "Type", "Description"],
+        [
+            ["$table", "string", "'matchs' - Nom explicite de la table (evite la convention Laravel 'match_s')"],
+            ["$fillable", "array", "['equipe_a_id', 'equipe_b_id', 'discipline_id', 'edition_id', 'date_match', 'lieu', 'phase', 'score_a', 'score_b', 'statut', 'buteurs']"],
+            ["$casts", "array", "['buteurs' => 'array'] - Le champ JSON est automatiquement converti en tableau PHP"],
+            ["equipeA()", "BelongsTo", "Retourne l'equipe recevante (domicile)"],
+            ["equipeB()", "BelongsTo", "Retourne l'equipe visiteuse"],
+            ["discipline()", "BelongsTo", "Retourne la discipline sportive du match"],
+            ["edition()", "BelongsTo", "Retourne l'edition du tournoi"],
+        ]
+    )
+    doc.add_paragraph("Structure JSON du champ 'buteurs' :")
+    doc.add_paragraph('{ "equipe_a": [{"id": 45, "nb_buts": 2}, {"id": 48, "nb_buts": 1}], "equipe_b": [{"id": 62, "nb_buts": 1}] }')
+
+    # --- 3. CONTROLEURS ---
+    doc.add_heading("3. Controleurs (Couche Logique Metier)", level=1)
+
+    doc.add_heading("3.1. DashboardController", level=2)
+    doc.add_paragraph("Fichier : app/Http/Controllers/DashboardController.php")
+    doc.add_paragraph("Methode index() : Recupere l'edition selectionnee (via parametre GET 'edition_id') et calcule les KPIs suivants :")
+    doc.add_paragraph("Nombre de facultes, equipes, joueurs et matchs pour l'edition selectionnee.", style='List Bullet')
+    doc.add_paragraph("Les 5 derniers matchs joues (tries par date decroissante).", style='List Bullet')
+    doc.add_paragraph("Les 5 prochains matchs planifies (tries par date croissante).", style='List Bullet')
+    doc.add_paragraph("Les 5 meilleurs buteurs de l'edition.", style='List Bullet')
+
+    doc.add_heading("3.2. EditionController", level=2)
+    doc.add_paragraph("Fichier : app/Http/Controllers/EditionController.php")
+    doc.add_paragraph("Controleur CRUD complet (index, show, create, store, edit, update, destroy) plus :")
+    doc.add_paragraph("Methode arbre($id) : Genere la vue de l'arbre du tournoi. Recupere tous les matchs de l'edition groupes par discipline et par phase. Transmet les donnees a la vue editions.arbre.", style='List Bullet')
+    doc.add_paragraph("Validation store/update : nom (required, string, max:255), date_debut (required, date), date_fin (required, date), statut (required, in:a_venir,en_cours,terminee).", style='List Bullet')
+
+    doc.add_heading("3.3. MatchController", level=2)
+    doc.add_paragraph("Fichier : app/Http/Controllers/MatchController.php")
+    doc.add_paragraph("Controleur le plus complexe du systeme. En plus du CRUD standard :")
+    doc.add_paragraph("Methode saisirScore($id) : Recoit les donnees du formulaire de saisie de score. Traitement en 4 etapes :", style='List Bullet')
+    doc.add_paragraph("   1. Validation des scores (integer, min:0).", style='List Bullet')
+    doc.add_paragraph("   2. Mise a jour des champs score_a, score_b et statut='joue'.", style='List Bullet')
+    doc.add_paragraph("   3. Stockage des buteurs au format JSON dans le champ 'buteurs'.", style='List Bullet')
+    doc.add_paragraph("   4. Incrementation du compteur de buts pour chaque joueur concerne via Joueur::find($id)->increment('buts', $nb).", style='List Bullet')
+
+    doc.add_heading("3.4. ClassementController", level=2)
+    doc.add_paragraph("Fichier : app/Http/Controllers/ClassementController.php")
+    doc.add_paragraph("Methode index() : Recupere toutes les equipes de l'edition selectionnee, les filtre par la discipline choisie (parametre GET), puis les trie par points decroissants et difference de buts. Le tri est effectue en PHP via la methode sortByDesc() d'Eloquent Collection.")
+
+    doc.add_heading("3.5. JoueurController", level=2)
+    doc.add_paragraph("Fichier : app/Http/Controllers/JoueurController.php")
+    doc.add_paragraph("Particularite : Le formulaire utilise le champ 'numero' mais le modele stocke 'numero_maillot'. Le controleur effectue le mapping dans les methodes store() et update() :")
+    doc.add_paragraph("$data['numero_maillot'] = $request->input('numero');")
+
+    doc.add_heading("3.6. UsersManagementController", level=2)
+    doc.add_paragraph("Fichier : app/Http/Controllers/UsersManagementController.php")
+    doc.add_paragraph("Controleur CRUD pour la gestion des comptes utilisateurs. Accessible uniquement aux administrateurs (protege par le middleware 'admin').")
+    doc.add_paragraph("Le mot de passe est hashe via Hash::make() avant l'enregistrement. Lors de la modification, le mot de passe n'est mis a jour que si un nouveau mot de passe est fourni (champ non vide).")
+
+    # --- 4. MIDDLEWARES ---
+    doc.add_heading("4. Middlewares (Couche Filtrage)", level=1)
+    doc.add_heading("4.1. Middleware AdminMiddleware", level=2)
+    doc.add_paragraph("Fichier : app/Http/Middleware/AdminMiddleware.php")
+    doc.add_paragraph("Verifie que l'utilisateur connecte possede le role 'admin'. Si ce n'est pas le cas, retourne une reponse HTTP 403 Forbidden ou redirige vers le tableau de bord.")
+    doc.add_paragraph("Enregistre sous la cle 'admin' dans le fichier bootstrap/app.php.")
+
+    doc.add_heading("4.2. Middleware CanManageMiddleware", level=2)
+    doc.add_paragraph("Fichier : app/Http/Middleware/CanManageMiddleware.php")
+    doc.add_paragraph("Verifie que l'utilisateur connecte possede le role 'admin' OU 'staff'. Permet aux deux roles de gerer les donnees operationnelles (joueurs, matchs, scores).")
+    doc.add_paragraph("Enregistre sous la cle 'can.manage'.")
+
+    # --- 5. ROUTES ---
+    doc.add_heading("5. Routage (routes/web.php)", level=1)
+    doc.add_paragraph("Le fichier web.php est organise en groupes hierarchiques de routes :")
+
+    doc.add_heading("5.1. Groupe Authentifie (middleware: auth)", level=2)
+    doc.add_paragraph("Toutes les routes de l'application sont enveloppees dans un groupe middleware(['auth']), ce qui oblige l'utilisateur a etre connecte pour acceder a n'importe quelle page (sauf la page de connexion).")
+
+    doc.add_heading("5.2. Groupe Admin (middleware: admin)", level=2)
+    doc.add_paragraph("Sous-groupe a l'interieur du groupe authentifie. Protege les routes de creation, modification et suppression des entites structurelles :")
+    doc.add_paragraph("Editions : resource('editions', EditionController::class)->except(['index', 'show'])", style='List Bullet')
+    doc.add_paragraph("Facultes : resource('facultes', FaculteController::class)->except(['index', 'show'])", style='List Bullet')
+    doc.add_paragraph("Disciplines : resource('disciplines', DisciplineController::class)->except(['index', 'show'])", style='List Bullet')
+    doc.add_paragraph("Equipes : resource('equipes', EquipeController::class)->except(['index', 'show'])", style='List Bullet')
+    doc.add_paragraph("Utilisateurs : resource('users', UsersManagementController::class)", style='List Bullet')
+
+    doc.add_heading("5.3. Groupe Can Manage (middleware: can.manage)", level=2)
+    doc.add_paragraph("Protege les routes de gestion operationnelle :")
+    doc.add_paragraph("Joueurs : resource('joueurs', JoueurController::class)->except(['index', 'show'])", style='List Bullet')
+    doc.add_paragraph("Matchs : resource('matchs', MatchController::class)->except(['index', 'show'])", style='List Bullet')
+    doc.add_paragraph("Saisie Score : POST /matchs/{match}/score -> MatchController@saisirScore", style='List Bullet')
+
+    # --- 6. VUES BLADE ---
+    doc.add_heading("6. Templates Blade (Couche Presentation)", level=1)
+    doc.add_heading("6.1. Architecture des Layouts", level=2)
+    doc.add_paragraph("Le systeme de layouts Blade utilise l'heritage de composants :")
+    add_styled_table(doc,
+        ["Fichier", "Role", "Contenu"],
+        [
+            ["layouts/app.blade.php", "Layout principal", "Structure HTML complete avec sidebar, topbar et zone de contenu {{ $slot }}"],
+            ["layouts/guest.blade.php", "Layout invites", "Layout simplifie pour les pages de connexion et d'inscription"],
+            ["components/sidebar.blade.php", "Composant sidebar", "Navigation laterale avec liens dynamiques et detection de la page active"],
+            ["components/topbar.blade.php", "Composant topbar", "Barre superieure avec titre, actions et menu utilisateur"],
+        ]
+    )
+
+    doc.add_heading("6.2. Organisation des Vues", level=2)
+    add_styled_table(doc,
+        ["Repertoire", "Fichiers", "Description"],
+        [
+            ["views/dashboard.blade.php", "1 fichier", "Page du tableau de bord avec KPIs, resultats et prochains matchs"],
+            ["views/editions/", "index, show, create, edit, arbre", "Pages de gestion des editions + arbre du tournoi"],
+            ["views/facultes/", "index, show, create, edit", "Pages de gestion des facultes"],
+            ["views/disciplines/", "index, create, edit", "Pages de gestion des disciplines"],
+            ["views/equipes/", "index, show, create, edit", "Pages de gestion des equipes"],
+            ["views/joueurs/", "index, create, edit", "Pages de gestion des joueurs"],
+            ["views/matchs/", "index, show, create, edit", "Pages de gestion des matchs + saisie de score"],
+            ["views/classements/", "index", "Page des classements par discipline"],
+            ["views/users/", "index, create, edit", "Pages de gestion des comptes utilisateurs"],
+            ["views/profile/", "edit", "Page de gestion du profil personnel"],
+            ["views/auth/", "login, register, forgot-password, reset-password", "Pages d'authentification (fournies par Breeze)"],
+        ]
+    )
+
+    # --- 7. MIGRATIONS ---
+    doc.add_heading("7. Migrations de Base de Donnees", level=1)
+    doc.add_paragraph("Les migrations sont des fichiers PHP situes dans database/migrations/ qui definissent la structure des tables. Elles sont executees sequentiellement par php artisan migrate.")
+    add_styled_table(doc,
+        ["Fichier", "Table Creee", "Colonnes Principales"],
+        [
+            ["create_users_table", "users", "id, name, email, password, role, remember_token, timestamps"],
+            ["create_editions_table", "editions", "id, nom, date_debut, date_fin, lieu, description, statut, timestamps"],
+            ["create_facultes_table", "facultes", "id, nom, logo, couleur, edition_id (FK), timestamps"],
+            ["create_disciplines_table", "disciplines", "id, nom, type, nb_joueurs, timestamps"],
+            ["create_equipes_table", "equipes", "id, nom, faculte_id (FK), discipline_id (FK), edition_id (FK), timestamps"],
+            ["create_joueurs_table", "joueurs", "id, nom, prenom, sexe, equipe_id (FK), numero_maillot, buts, timestamps"],
+            ["create_matchs_table", "matchs", "id, equipe_a_id (FK), equipe_b_id (FK), discipline_id (FK), edition_id (FK), date_match, lieu, phase, score_a, score_b, statut, buteurs (JSON), timestamps"],
+            ["create_sessions_table", "sessions", "id, user_id, ip_address, user_agent, payload, last_activity"],
+            ["create_cache_table", "cache / cache_locks", "key, value, expiration"],
+        ]
+    )
+
+    # --- 8. SEEDERS ---
+    doc.add_heading("8. Seeders (Donnees de Test)", level=1)
+    doc.add_heading("8.1. GuineanDataSeeder", level=2)
+    doc.add_paragraph("Fichier : database/seeders/GuineanDataSeeder.php")
+    doc.add_paragraph("Ce seeder cree un jeu de donnees realiste base sur les universites guineennes :")
+    doc.add_paragraph("1 compte admin (admin@unigames.com / password)", style='List Bullet')
+    doc.add_paragraph("1 edition 'Edition 2026' avec statut 'en_cours'", style='List Bullet')
+    doc.add_paragraph("8 facultes guineennes (UGANC, UGLCS, ISSMV, etc.)", style='List Bullet')
+    doc.add_paragraph("4 disciplines (Football, Basketball, Volleyball, Handball)", style='List Bullet')
+    doc.add_paragraph("Equipes generees automatiquement pour chaque combinaison faculte/discipline", style='List Bullet')
+    doc.add_paragraph("Joueurs avec noms realistes guineens", style='List Bullet')
+
+    doc.add_heading("8.2. FixEdition2026Seeder", level=2)
+    doc.add_paragraph("Fichier : database/seeders/FixEdition2026Seeder.php")
+    doc.add_paragraph("Ce seeder genere des matchs avec scores simules pour l'edition 2026, permettant de tester les fonctionnalites de classement et d'arbre du tournoi avec des donnees realistes.")
+
+    doc.add_heading("8.3. Commandes d'Execution", level=2)
+    doc.add_paragraph("$ php artisan db:seed --class=GuineanDataSeeder    # Donnees de base")
+    doc.add_paragraph("$ php artisan db:seed --class=FixEdition2026Seeder # Matchs et scores")
+    doc.add_paragraph("$ php artisan migrate:fresh --seed                 # Reinitialisation complete (ATTENTION : supprime toutes les donnees)")
+
+    # --- 9. CONFIGURATION ---
+    doc.add_heading("9. Fichiers de Configuration", level=1)
+    doc.add_heading("9.1. Fichier .env", level=2)
+    doc.add_paragraph("Le fichier .env a la racine du projet contient toutes les variables d'environnement. Ce fichier n'est PAS versionne (present dans .gitignore). Un fichier .env.example sert de modele.")
+
+    doc.add_heading("9.2. tailwind.config.js", level=2)
+    doc.add_paragraph("Configure Tailwind CSS pour scanner les fichiers Blade et generer uniquement les classes CSS utilisees :")
+    doc.add_paragraph("content: ['./resources/**/*.blade.php', './resources/**/*.js']")
+
+    doc.add_heading("9.3. vite.config.js", level=2)
+    doc.add_paragraph("Configure Vite pour compiler les assets Laravel :")
+    doc.add_paragraph("Entrees : resources/css/app.css et resources/js/app.js", style='List Bullet')
+    doc.add_paragraph("Plugin : laravel-vite-plugin pour l'integration avec Laravel", style='List Bullet')
+    doc.add_paragraph("Hot Module Replacement (HMR) : Rechargement instantane en developpement", style='List Bullet')
+
+    doc.add_heading("9.4. composer.json", level=2)
+    doc.add_paragraph("Dependances PHP principales :")
+    add_styled_table(doc,
+        ["Package", "Version", "Role"],
+        [
+            ["laravel/framework", "^12.0", "Framework principal"],
+            ["laravel/breeze", "^2.0", "Kit d'authentification"],
+            ["laravel/tinker", "^2.10", "Console interactive PHP pour le debogage"],
+        ]
+    )
+
+    # --- 10. DEPLOIEMENT ---
+    doc.add_heading("10. Procedures de Deploiement", level=1)
+    doc.add_heading("10.1. Deploiement en Developpement", level=2)
+    doc.add_paragraph("Terminal 1 (serveur PHP) :")
+    doc.add_paragraph("$ php artisan serve --port=8001")
+    doc.add_paragraph("Terminal 2 (serveur Vite avec HMR) :")
+    doc.add_paragraph("$ npm run dev")
+    doc.add_paragraph("L'application est accessible a http://localhost:8001. Les modifications de code sont prises en compte instantanement grace au HMR de Vite.")
+
+    doc.add_heading("10.2. Deploiement en Production", level=2)
+    doc.add_paragraph("Etapes de preparation :")
+    doc.add_paragraph("1. Compiler les assets pour la production : $ npm run build", style='List Number')
+    doc.add_paragraph("2. Optimiser l'autoloader Composer : $ composer install --optimize-autoloader --no-dev", style='List Number')
+    doc.add_paragraph("3. Mettre en cache la configuration : $ php artisan config:cache", style='List Number')
+    doc.add_paragraph("4. Mettre en cache les routes : $ php artisan route:cache", style='List Number')
+    doc.add_paragraph("5. Mettre en cache les vues : $ php artisan view:cache", style='List Number')
+    doc.add_paragraph("6. Definir APP_ENV=production et APP_DEBUG=false dans .env", style='List Number')
+
+    doc.add_heading("10.3. Configuration Apache (Production)", level=2)
+    doc.add_paragraph("Exemple de VirtualHost Apache pour servir l'application :")
+    doc.add_paragraph("<VirtualHost *:80>")
+    doc.add_paragraph("    ServerName unigames.exemple.com")
+    doc.add_paragraph("    DocumentRoot /var/www/UniGames_Laravel/public")
+    doc.add_paragraph("    <Directory /var/www/UniGames_Laravel/public>")
+    doc.add_paragraph("        AllowOverride All")
+    doc.add_paragraph("        Require all granted")
+    doc.add_paragraph("    </Directory>")
+    doc.add_paragraph("</VirtualHost>")
+    doc.add_paragraph("S'assurer que le module mod_rewrite est active : $ sudo a2enmod rewrite && sudo systemctl restart apache2")
+
+    doc.add_heading("10.4. Configuration Nginx (Production)", level=2)
+    doc.add_paragraph("Exemple de configuration Nginx :")
+    doc.add_paragraph("server {")
+    doc.add_paragraph("    listen 80;")
+    doc.add_paragraph("    server_name unigames.exemple.com;")
+    doc.add_paragraph("    root /var/www/UniGames_Laravel/public;")
+    doc.add_paragraph("    index index.php;")
+    doc.add_paragraph("    location / {")
+    doc.add_paragraph("        try_files $uri $uri/ /index.php?$query_string;")
+    doc.add_paragraph("    }")
+    doc.add_paragraph("    location ~ \\.php$ {")
+    doc.add_paragraph("        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;")
+    doc.add_paragraph("        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;")
+    doc.add_paragraph("        include fastcgi_params;")
+    doc.add_paragraph("    }")
+    doc.add_paragraph("}")
+
+    # --- 11. TESTS ---
+    doc.add_heading("11. Tests Automatises", level=1)
+    doc.add_heading("11.1. Tests d'Authentification (Laravel Breeze)", level=2)
+    doc.add_paragraph("Laravel Breeze fournit un ensemble de tests automatises dans le repertoire tests/Feature/Auth/ :")
+    add_styled_table(doc,
+        ["Fichier de Test", "Tests Couverts"],
+        [
+            ["AuthenticationTest.php", "Connexion valide, connexion invalide, deconnexion"],
+            ["PasswordResetTest.php", "Demande de reinitialisation, reinitialisation avec token valide"],
+            ["RegistrationTest.php", "Inscription valide, validation des champs"],
+            ["PasswordConfirmationTest.php", "Confirmation de mot de passe avant actions sensibles"],
+            ["PasswordUpdateTest.php", "Modification du mot de passe avec ancien mot de passe valide"],
+        ]
+    )
+
+    doc.add_heading("11.2. Execution des Tests", level=2)
+    doc.add_paragraph("Lancer tous les tests :")
+    doc.add_paragraph("$ php artisan test")
+    doc.add_paragraph("Lancer un fichier de test specifique :")
+    doc.add_paragraph("$ php artisan test --filter=AuthenticationTest")
+    doc.add_paragraph("Les tests utilisent une base de donnees SQLite en memoire pour l'isolation (configure dans phpunit.xml).")
+
+    # --- 12. SECURITE TECHNIQUE ---
+    doc.add_heading("12. Considerations de Securite", level=1)
+    doc.add_paragraph("Mesures de securite implementees dans le code source :")
+    add_styled_table(doc,
+        ["Mesure", "Implementation", "Fichier/Composant"],
+        [
+            ["Hashage bcrypt", "Hash::make() avec 12 rounds", "config/hashing.php, .env (BCRYPT_ROUNDS)"],
+            ["Protection CSRF", "Directive @csrf dans tous les formulaires", "Middleware VerifyCsrfToken"],
+            ["Validation serveur", "$request->validate() dans chaque methode store/update", "Tous les controleurs"],
+            ["Echappement XSS", "Double accolades {{ }} dans Blade (echappement automatique)", "Tous les templates Blade"],
+            ["Requetes preparees", "Eloquent utilise des requetes preparees PDO (protection SQL injection)", "Tous les modeles"],
+            ["Sessions securisees", "Sessions stockees en base de donnees, cookie HttpOnly", "config/session.php"],
+            ["Throttling", "Protection contre le brute-force sur la page de connexion", "Laravel Breeze (RateLimiter)"],
+            ["Mot de passe confirme", "Confirmation requise pour les actions sensibles (suppression de compte)", "middleware password.confirm"],
+        ]
+    )
+
+    doc.save("docs/11_Documentation_Technique.docx")
+    print("[OK] 11_Documentation_Technique.docx")
+
+# ============================================================
 # MAIN
 # ============================================================
 def main():
@@ -1661,9 +2326,11 @@ def main():
     create_installation()
     create_plan_test()
     create_maquette()
+    create_guide_administration()
+    create_documentation_technique()
     
     print("=" * 60)
-    print("  7 documents generes avec succes dans le dossier 'docs/'")
+    print("  9 documents generes avec succes dans le dossier 'docs/'")
     print("=" * 60)
 
 if __name__ == "__main__":
