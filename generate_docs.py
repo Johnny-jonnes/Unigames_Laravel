@@ -516,6 +516,8 @@ def create_manuel_utilisateur():
     doc.add_paragraph("Modification du Mot de Passe : Saisie de l'ancien mot de passe, puis du nouveau mot de passe avec confirmation.", style='List Bullet')
     doc.add_paragraph("Suppression du Compte : Action irreversible necessitant la saisie du mot de passe actuel pour confirmation.", style='List Bullet')
 
+    add_screenshots(doc, "Captures d'Ecran (Manuel Utilisateur)")
+
     doc.save("docs/2_Manuel_Utilisateur.docx")
     print("[OK] 2_Manuel_Utilisateur.docx")
 
@@ -1181,8 +1183,26 @@ def create_maquette():
     doc.add_heading("4.2. Topbar (Barre Superieure)", level=2)
     doc.add_paragraph("Barre horizontale en haut de la zone de contenu. Elle contient le titre de la page courante a gauche et les actions contextuelles a droite (boutons de creation, selecteur d'edition). L'avatar de l'utilisateur connecte est affiche a l'extreme droite avec un menu deroulant (Profil, Deconnexion).")
 
+    add_screenshots(doc, "Captures d'Ecran (Dossier Maquettage)")
+
     doc.save("docs/7_Dossier_Maquettage.docx")
     print("[OK] 7_Dossier_Maquettage.docx")
+
+def add_screenshots(doc, title="Captures d'Ecran"):
+    import glob
+    images = glob.glob("docs/images/*.jpeg")
+    if not images:
+        images = glob.glob("docs/images/*.png")
+    
+    if images:
+        doc.add_heading(title, level=1)
+        doc.add_paragraph("Les images ci-dessous presentent l'interface reelle de l'application.")
+        for img in sorted(images):
+            try:
+                doc.add_picture(img, width=Inches(6.0))
+                doc.add_paragraph() # espace apres l'image
+            except Exception as e:
+                print(f"Erreur lors de l'ajout de l'image {img}: {e}")
 
 # ============================================================
 # MAIN
