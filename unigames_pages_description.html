@@ -1,0 +1,661 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+
+.nav-pills {
+  display: flex; gap: 6px; flex-wrap: wrap;
+  margin-bottom: 20px; padding-bottom: 16px;
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+}
+.pill {
+  font-size: 12px; padding: 5px 14px;
+  border-radius: 20px; border: 0.5px solid var(--color-border-tertiary);
+  background: var(--color-background-secondary);
+  color: var(--color-text-secondary);
+  cursor: pointer; transition: all 0.15s;
+}
+.pill.active {
+  background: #0F2D6B; color: #fff; border-color: #0F2D6B;
+}
+.pill:hover:not(.active) { background: var(--color-background-primary); color: var(--color-text-primary); }
+
+.page-section { display: none; }
+.page-section.active { display: block; }
+
+.page-label {
+  font-size: 11px; font-weight: 500; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--color-text-secondary);
+  margin-bottom: 12px;
+}
+
+.mockup-frame {
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  background: #F0F4FA;
+  margin-bottom: 20px;
+}
+
+/* ── SIDEBAR ── */
+.app-shell { display: flex; height: 480px; }
+.sidebar {
+  width: 200px; flex-shrink: 0;
+  background: #0A1628;
+  display: flex; flex-direction: column;
+}
+.sb-logo {
+  padding: 16px 14px 14px;
+  border-bottom: 0.5px solid rgba(255,255,255,0.08);
+}
+.sb-logo-icon {
+  width: 28px; height: 28px; border-radius: 6px;
+  background: #F59E0B;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; margin-bottom: 8px;
+}
+.sb-logo-title { font-size: 14px; font-weight: 700; color: #fff; letter-spacing: -0.01em; }
+.sb-logo-sub { font-size: 9px; color: rgba(255,255,255,0.35); letter-spacing: 0.06em; margin-top: 1px; }
+.sb-user {
+  padding: 12px 14px;
+  border-bottom: 0.5px solid rgba(255,255,255,0.08);
+  display: flex; align-items: center; gap: 8px;
+}
+.sb-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: #1A4BAD;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; color: #93C5FD; flex-shrink: 0;
+}
+.sb-user-name { font-size: 11px; font-weight: 600; color: #fff; }
+.sb-user-role { font-size: 9px; color: rgba(255,255,255,0.4); }
+.sb-nav { flex: 1; padding: 12px 0; overflow: hidden; }
+.sb-group-label {
+  font-size: 9px; font-weight: 600; letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.25); padding: 8px 14px 4px;
+  text-transform: uppercase;
+}
+.sb-link {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 14px; font-size: 11px;
+  color: rgba(255,255,255,0.5); cursor: pointer;
+  border-left: 2px solid transparent;
+}
+.sb-link.active {
+  color: #fff; background: #1A4BAD;
+  border-left: 2px solid #F59E0B;
+}
+.sb-link:hover:not(.active) { color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.05); }
+.sb-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: currentColor; flex-shrink: 0;
+}
+.sb-footer {
+  padding: 10px 0;
+  border-top: 0.5px solid rgba(255,255,255,0.08);
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  height: 48px; background: #fff;
+  border-bottom: 0.5px solid #E2E8F0;
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 0 20px; flex-shrink: 0;
+}
+.breadcrumb { font-size: 11px; color: #94A3B8; }
+.breadcrumb span { color: #0F172A; font-weight: 500; }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.notif-btn {
+  width: 28px; height: 28px; border-radius: 6px;
+  background: #F0F4FA; display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+}
+.ta-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: #0F2D6B; display: flex; align-items: center;
+  justify-content: center; font-size: 9px; font-weight: 700; color: #fff;
+}
+
+/* ── MAIN CONTENT ── */
+.main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.page-body { flex: 1; padding: 16px; overflow: hidden; background: #F0F4FA; }
+
+/* ── KPI CARDS ── */
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+.kpi-card {
+  background: #fff; border-radius: 8px;
+  border: 0.5px solid #E2E8F0; padding: 12px;
+  border-top: 3px solid var(--kc);
+}
+.kpi-label { font-size: 9px; color: #64748B; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
+.kpi-val { font-size: 22px; font-weight: 700; color: #0F172A; margin: 2px 0; }
+.kpi-sub { font-size: 9px; color: #94A3B8; }
+
+/* ── TABLE ── */
+.data-card {
+  background: #fff; border-radius: 8px;
+  border: 0.5px solid #E2E8F0; overflow: hidden;
+}
+.data-card-header {
+  padding: 10px 14px; display: flex;
+  align-items: center; justify-content: space-between;
+  border-bottom: 0.5px solid #E2E8F0;
+}
+.data-card-title { font-size: 12px; font-weight: 600; color: #0F172A; }
+.btn-sm {
+  font-size: 10px; padding: 4px 10px; border-radius: 5px;
+  border: 0.5px solid #0F2D6B; color: #0F2D6B;
+  background: transparent; cursor: pointer;
+}
+.mini-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+.mini-table th {
+  background: #F8FAFC; padding: 6px 10px; text-align: left;
+  font-size: 9px; font-weight: 600; color: #64748B;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  border-bottom: 0.5px solid #E2E8F0;
+}
+.mini-table td { padding: 6px 10px; border-bottom: 0.5px solid #F1F5F9; color: #0F172A; }
+.badge {
+  font-size: 9px; padding: 2px 7px; border-radius: 10px; font-weight: 500;
+}
+.badge-green { background: #DCFCE7; color: #166534; }
+.badge-blue  { background: #DBEAFE; color: #1E40AF; }
+.badge-amber { background: #FEF3C7; color: #92400E; }
+
+/* ── LOGIN ── */
+.login-split { display: flex; height: 440px; }
+.login-left {
+  width: 45%; background: #0A1628;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 24px; gap: 16px;
+}
+.login-logo-icon {
+  width: 52px; height: 52px; border-radius: 12px;
+  background: #F59E0B;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+}
+.login-title-big { font-size: 20px; font-weight: 700; color: #fff; text-align: center; line-height: 1.3; }
+.login-tagline { font-size: 11px; color: rgba(255,255,255,0.45); text-align: center; }
+.login-features { width: 100%; display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+.login-feat {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 10px; color: rgba(255,255,255,0.6);
+}
+.feat-dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  background: rgba(245,158,11,0.2);
+  border: 1px solid #F59E0B; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.feat-dot::after { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #F59E0B; }
+
+.login-right {
+  flex: 1; background: #F0F4FA;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+}
+.login-form-box {
+  background: #fff; border-radius: 10px;
+  border: 0.5px solid #E2E8F0; padding: 24px; width: 100%;
+}
+.lf-title { font-size: 16px; font-weight: 700; color: #0F172A; margin-bottom: 2px; }
+.lf-sub { font-size: 10px; color: #64748B; margin-bottom: 16px; }
+.lf-label { font-size: 10px; font-weight: 500; color: #374151; margin-bottom: 4px; }
+.lf-input {
+  width: 100%; height: 38px; border: 1.5px solid #E2E8F0;
+  border-radius: 6px; padding: 0 10px 0 32px;
+  font-size: 11px; color: #0F172A; background: #fff;
+  margin-bottom: 10px;
+}
+.lf-input-wrap { position: relative; }
+.lf-icon {
+  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  width: 12px; height: 12px; color: #94A3B8;
+}
+.lf-btn {
+  width: 100%; height: 38px; border-radius: 6px;
+  background: #0F2D6B; color: #fff; border: none;
+  font-size: 12px; font-weight: 600; cursor: pointer; margin-top: 4px;
+}
+.lf-forgot { font-size: 9px; color: #1A4BAD; text-align: right; margin-top: -6px; margin-bottom: 10px; }
+
+/* ── FORM PAGE ── */
+.form-page { height: 480px; display: flex; flex-direction: column; background: #F0F4FA; }
+.form-topbar {
+  height: 48px; background: #fff; border-bottom: 0.5px solid #E2E8F0;
+  display: flex; align-items: center; justify-content: space-between; padding: 0 16px;
+}
+.form-body { flex: 1; padding: 16px; display: flex; gap: 12px; overflow: hidden; }
+.form-sidebar-mini {
+  width: 140px; flex-shrink: 0;
+  background: #0A1628; border-radius: 8px; padding: 10px 0;
+}
+.form-main { flex: 1; overflow: hidden; }
+.form-card {
+  background: #fff; border-radius: 8px;
+  border: 0.5px solid #E2E8F0; padding: 14px;
+  margin-bottom: 10px;
+}
+.form-section-title {
+  font-size: 9px; font-weight: 600; color: #64748B;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  margin-bottom: 10px; padding-bottom: 6px;
+  border-bottom: 0.5px solid #E2E8F0;
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+.form-group { display: flex; flex-direction: column; gap: 3px; }
+.fg-label { font-size: 9px; font-weight: 500; color: #374151; }
+.fg-input {
+  height: 34px; border: 1.5px solid #E2E8F0; border-radius: 5px;
+  padding: 0 10px; font-size: 10px; background: #fff; color: #0F172A;
+}
+.fg-input.focused { border-color: #1A4BAD; }
+.form-actions {
+  background: #fff; border-top: 0.5px solid #E2E8F0;
+  padding: 10px 14px; display: flex; align-items: center;
+  justify-content: flex-end; gap: 8px;
+}
+.btn-cancel {
+  font-size: 11px; padding: 6px 14px; border-radius: 5px;
+  border: 0.5px solid #E2E8F0; color: #64748B; background: transparent; cursor: pointer;
+}
+.btn-primary {
+  font-size: 11px; padding: 6px 16px; border-radius: 5px;
+  background: #0F2D6B; color: #fff; border: none; cursor: pointer; font-weight: 600;
+}
+
+/* ── CLASSEMENT ── */
+.rank-row { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-bottom: 0.5px solid #F1F5F9; }
+.rank-num {
+  width: 20px; height: 20px; border-radius: 5px;
+  background: #F0F4FA; display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; color: #64748B; flex-shrink: 0;
+}
+.rank-num.gold { background: #FEF3C7; color: #92400E; }
+.rank-num.silver { background: #F1F5F9; color: #475569; }
+.rank-num.bronze { background: #FEF0E7; color: #9A3412; }
+.rank-name { flex: 1; font-size: 10px; font-weight: 500; color: #0F172A; }
+.rank-pts { font-size: 10px; font-weight: 700; color: #0F2D6B; min-width: 28px; text-align: right; }
+.rank-bar-wrap { width: 60px; height: 5px; background: #E2E8F0; border-radius: 3px; }
+.rank-bar { height: 5px; border-radius: 3px; background: #1A4BAD; }
+</style>
+
+<h2 class="sr-only">Maquettes des pages de l'application UniGames : login, dashboard, formulaire et classement</h2>
+
+<div class="nav-pills">
+  <div class="pill active" onclick="show('dashboard',this)">Dashboard</div>
+  <div class="pill" onclick="show('login',this)">Login</div>
+  <div class="pill" onclick="show('form',this)">Formulaire</div>
+  <div class="pill" onclick="show('classement',this)">Classement</div>
+  <div class="pill" onclick="show('liste',this)">Liste / Table</div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="page-section active" id="s-dashboard">
+  <div class="page-label">Dashboard — vue d'ensemble</div>
+  <div class="mockup-frame">
+    <div class="app-shell">
+      <div class="sidebar">
+        <div class="sb-logo">
+          <div class="sb-logo-icon">🏆</div>
+          <div class="sb-logo-title">UniGames</div>
+          <div class="sb-logo-sub">SPORTS MANAGEMENT</div>
+        </div>
+        <div class="sb-user">
+          <div class="sb-avatar">AD</div>
+          <div>
+            <div class="sb-user-name">Administrateur</div>
+            <div class="sb-user-role">Super Admin</div>
+          </div>
+        </div>
+        <div class="sb-nav">
+          <div class="sb-group-label">Général</div>
+          <div class="sb-link active"><div class="sb-dot"></div> Dashboard</div>
+          <div class="sb-group-label">Gestion</div>
+          <div class="sb-link"><div class="sb-dot"></div> Éditions</div>
+          <div class="sb-link"><div class="sb-dot"></div> Facultés</div>
+          <div class="sb-link"><div class="sb-dot"></div> Disciplines</div>
+          <div class="sb-link"><div class="sb-dot"></div> Équipes</div>
+          <div class="sb-link"><div class="sb-dot"></div> Joueurs</div>
+          <div class="sb-group-label">Compétition</div>
+          <div class="sb-link"><div class="sb-dot"></div> Matchs</div>
+          <div class="sb-link"><div class="sb-dot"></div> Classements</div>
+        </div>
+        <div class="sb-footer">
+          <div class="sb-link"><div class="sb-dot"></div> Déconnexion</div>
+        </div>
+      </div>
+      <div class="main-content">
+        <div class="topbar">
+          <div class="breadcrumb"><span>Dashboard</span></div>
+          <div class="topbar-right">
+            <div class="notif-btn">🔔</div>
+            <div class="ta-avatar">AD</div>
+          </div>
+        </div>
+        <div class="page-body">
+          <div class="kpi-grid">
+            <div class="kpi-card" style="--kc:#1A4BAD">
+              <div class="kpi-label">Éditions</div>
+              <div class="kpi-val">3</div>
+              <div class="kpi-sub">actives en cours</div>
+            </div>
+            <div class="kpi-card" style="--kc:#10B981">
+              <div class="kpi-label">Équipes</div>
+              <div class="kpi-val">24</div>
+              <div class="kpi-sub">inscrites</div>
+            </div>
+            <div class="kpi-card" style="--kc:#F59E0B">
+              <div class="kpi-label">Matchs</div>
+              <div class="kpi-val">48</div>
+              <div class="kpi-sub">joués</div>
+            </div>
+            <div class="kpi-card" style="--kc:#EF4444">
+              <div class="kpi-label">Joueurs</div>
+              <div class="kpi-val">312</div>
+              <div class="kpi-sub">enregistrés</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div class="data-card">
+              <div class="data-card-header">
+                <div class="data-card-title">Matchs récents</div>
+                <button class="btn-sm">Voir tout</button>
+              </div>
+              <table class="mini-table">
+                <tr><th>Équipes</th><th>Score</th><th>Statut</th></tr>
+                <tr><td>Lions vs Aigles</td><td style="font-weight:700">2 – 1</td><td><span class="badge badge-green">Joué</span></td></tr>
+                <tr><td>Cobras vs Panthères</td><td style="font-weight:700">0 – 0</td><td><span class="badge badge-amber">En cours</span></td></tr>
+                <tr><td>Requins vs Faucons</td><td style="color:#94A3B8">– – –</td><td><span class="badge badge-blue">Planifié</span></td></tr>
+              </table>
+            </div>
+            <div class="data-card">
+              <div class="data-card-header">
+                <div class="data-card-title">Top classement</div>
+              </div>
+              <div class="rank-row"><div class="rank-num gold">1</div><div class="rank-name">Faculté des Sciences</div><div class="rank-pts">21 pts</div></div>
+              <div class="rank-row"><div class="rank-num silver">2</div><div class="rank-name">Faculté de Droit</div><div class="rank-pts">18 pts</div></div>
+              <div class="rank-row"><div class="rank-num bronze">3</div><div class="rank-name">Faculté de Médecine</div><div class="rank-pts">15 pts</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div class="page-section" id="s-login">
+  <div class="page-label">Page login — split-screen enterprise</div>
+  <div class="mockup-frame">
+    <div class="login-split">
+      <div class="login-left">
+        <div class="login-logo-icon">🏆</div>
+        <div class="login-title-big">UniGames<br>Sports Platform</div>
+        <div class="login-tagline">Where Champions Are Made</div>
+        <div class="login-features">
+          <div class="login-feat"><div class="feat-dot"></div>Real-time tournament management</div>
+          <div class="login-feat"><div class="feat-dot"></div>Live standings &amp; rankings</div>
+          <div class="login-feat"><div class="feat-dot"></div>Multi-sport university platform</div>
+        </div>
+      </div>
+      <div class="login-right">
+        <div class="login-form-box">
+          <div class="lf-title">Welcome back</div>
+          <div class="lf-sub">Sign in to your admin account</div>
+          <div class="lf-label">Email address</div>
+          <div class="lf-input-wrap">
+            <svg class="lf-icon" viewBox="0 0 16 16" fill="none" stroke="#94A3B8" stroke-width="1.5"><rect x="1" y="3" width="14" height="10" rx="2"/><path d="M1 5l7 5 7-5"/></svg>
+            <input class="lf-input" placeholder="admin@unigames.edu" type="email" />
+          </div>
+          <div class="lf-label">Password</div>
+          <div class="lf-input-wrap">
+            <svg class="lf-icon" viewBox="0 0 16 16" fill="none" stroke="#94A3B8" stroke-width="1.5"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5 7V5a3 3 0 016 0v2"/></svg>
+            <input class="lf-input" placeholder="••••••••" type="password" />
+          </div>
+          <div class="lf-forgot">Forgot password?</div>
+          <button class="lf-btn">Sign In</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FORM -->
+<div class="page-section" id="s-form">
+  <div class="page-label">Page formulaire — ajouter une équipe</div>
+  <div class="mockup-frame">
+    <div class="form-page">
+      <div class="form-topbar">
+        <div class="breadcrumb">Gestion / Équipes / <span>Ajouter une équipe</span></div>
+        <div class="topbar-right">
+          <div class="notif-btn">🔔</div>
+          <div class="ta-avatar">AD</div>
+        </div>
+      </div>
+      <div class="form-body">
+        <div class="form-sidebar-mini">
+          <div class="sb-group-label">Général</div>
+          <div class="sb-link"><div class="sb-dot"></div> Dashboard</div>
+          <div class="sb-group-label">Gestion</div>
+          <div class="sb-link"><div class="sb-dot"></div> Éditions</div>
+          <div class="sb-link"><div class="sb-dot"></div> Facultés</div>
+          <div class="sb-link active"><div class="sb-dot"></div> Équipes</div>
+          <div class="sb-link"><div class="sb-dot"></div> Joueurs</div>
+          <div class="sb-group-label">Compétition</div>
+          <div class="sb-link"><div class="sb-dot"></div> Matchs</div>
+        </div>
+        <div class="form-main">
+          <div class="form-card">
+            <div class="form-section-title">Informations générales</div>
+            <div class="form-group" style="margin-bottom:8px">
+              <div class="fg-label">Nom de l'équipe *</div>
+              <input class="fg-input focused" placeholder="Ex: Les Lions de Conakry" style="width:100%;border-color:#1A4BAD;box-shadow:0 0 0 3px rgba(26,75,173,0.1)" />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <div class="fg-label">Faculté *</div>
+                <select class="fg-input" style="width:100%"><option>Faculté des Sciences</option></select>
+              </div>
+              <div class="form-group">
+                <div class="fg-label">Discipline *</div>
+                <select class="fg-input" style="width:100%"><option>Football</option></select>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="fg-label">Description (optionnel)</div>
+              <textarea class="fg-input" style="width:100%;height:52px;padding-top:8px;resize:none" placeholder="Informations complémentaires..."></textarea>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn-cancel">Annuler</button>
+            <button class="btn-primary">Enregistrer l'équipe →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CLASSEMENT -->
+<div class="page-section" id="s-classement">
+  <div class="page-label">Page classement — par discipline</div>
+  <div class="mockup-frame">
+    <div class="app-shell">
+      <div class="sidebar">
+        <div class="sb-logo">
+          <div class="sb-logo-icon">🏆</div>
+          <div class="sb-logo-title">UniGames</div>
+          <div class="sb-logo-sub">SPORTS MANAGEMENT</div>
+        </div>
+        <div class="sb-user">
+          <div class="sb-avatar">AD</div>
+          <div><div class="sb-user-name">Administrateur</div><div class="sb-user-role">Super Admin</div></div>
+        </div>
+        <div class="sb-nav">
+          <div class="sb-group-label">Général</div>
+          <div class="sb-link"><div class="sb-dot"></div> Dashboard</div>
+          <div class="sb-group-label">Compétition</div>
+          <div class="sb-link"><div class="sb-dot"></div> Matchs</div>
+          <div class="sb-link active"><div class="sb-dot"></div> Classements</div>
+          <div class="sb-link"><div class="sb-dot"></div> Statistiques</div>
+        </div>
+      </div>
+      <div class="main-content">
+        <div class="topbar">
+          <div class="breadcrumb">Compétition / <span>Classements</span></div>
+          <div class="topbar-right"><div class="ta-avatar">AD</div></div>
+        </div>
+        <div class="page-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div class="data-card">
+              <div class="data-card-header">
+                <div class="data-card-title">Football — Groupe A</div>
+                <span class="badge badge-green">En cours</span>
+              </div>
+              <table class="mini-table">
+                <tr><th>#</th><th>Équipe</th><th>Pts</th><th>J</th><th>G</th></tr>
+                <tr><td><span class="rank-num gold" style="display:inline-flex;width:16px;height:16px;font-size:9px">1</span></td><td>Les Lions</td><td style="font-weight:700;color:#0F2D6B">21</td><td>7</td><td>7</td></tr>
+                <tr><td><span class="rank-num silver" style="display:inline-flex;width:16px;height:16px;font-size:9px">2</span></td><td>Les Aigles</td><td style="font-weight:700;color:#0F2D6B">18</td><td>7</td><td>6</td></tr>
+                <tr><td><span class="rank-num bronze" style="display:inline-flex;width:16px;height:16px;font-size:9px">3</span></td><td>Les Cobras</td><td style="font-weight:700;color:#0F2D6B">12</td><td>7</td><td>4</td></tr>
+                <tr><td style="color:#94A3B8;font-size:9px">4</td><td>Les Requins</td><td style="color:#64748B">9</td><td>7</td><td>3</td></tr>
+              </table>
+            </div>
+            <div class="data-card">
+              <div class="data-card-header">
+                <div class="data-card-title">Meilleurs buteurs</div>
+              </div>
+              <div class="rank-row">
+                <div class="rank-num gold">1</div>
+                <div class="rank-name">Mamadou Diallo</div>
+                <div class="rank-pts">12 buts</div>
+              </div>
+              <div class="rank-row" style="margin:0 10px">
+                <div class="rank-bar-wrap" style="width:100%"><div class="rank-bar" style="width:100%"></div></div>
+              </div>
+              <div class="rank-row">
+                <div class="rank-num silver">2</div>
+                <div class="rank-name">Ibrahima Bah</div>
+                <div class="rank-pts">9 buts</div>
+              </div>
+              <div class="rank-row" style="margin:0 10px">
+                <div class="rank-bar-wrap" style="width:100%"><div class="rank-bar" style="width:75%"></div></div>
+              </div>
+              <div class="rank-row">
+                <div class="rank-num bronze">3</div>
+                <div class="rank-name">Oumar Camara</div>
+                <div class="rank-pts">7 buts</div>
+              </div>
+              <div class="rank-row" style="margin:0 10px">
+                <div class="rank-bar-wrap" style="width:100%"><div class="rank-bar" style="width:58%"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LISTE -->
+<div class="page-section" id="s-liste">
+  <div class="page-label">Page liste — gestion des équipes</div>
+  <div class="mockup-frame">
+    <div class="app-shell">
+      <div class="sidebar">
+        <div class="sb-logo">
+          <div class="sb-logo-icon">🏆</div>
+          <div class="sb-logo-title">UniGames</div>
+          <div class="sb-logo-sub">SPORTS MANAGEMENT</div>
+        </div>
+        <div class="sb-user">
+          <div class="sb-avatar">AD</div>
+          <div><div class="sb-user-name">Administrateur</div><div class="sb-user-role">Super Admin</div></div>
+        </div>
+        <div class="sb-nav">
+          <div class="sb-group-label">Gestion</div>
+          <div class="sb-link"><div class="sb-dot"></div> Éditions</div>
+          <div class="sb-link"><div class="sb-dot"></div> Facultés</div>
+          <div class="sb-link active"><div class="sb-dot"></div> Équipes</div>
+          <div class="sb-link"><div class="sb-dot"></div> Joueurs</div>
+        </div>
+      </div>
+      <div class="main-content">
+        <div class="topbar">
+          <div class="breadcrumb">Gestion / <span>Équipes</span></div>
+          <div class="topbar-right">
+            <button class="btn-sm" style="background:#0F2D6B;color:#fff;border-color:#0F2D6B">+ Ajouter</button>
+            <div class="ta-avatar">AD</div>
+          </div>
+        </div>
+        <div class="page-body">
+          <div class="data-card" style="height:100%">
+            <div class="data-card-header">
+              <div class="data-card-title">Toutes les équipes (24)</div>
+              <input style="height:26px;border:0.5px solid #E2E8F0;border-radius:5px;padding:0 8px;font-size:10px;color:#0F172A" placeholder="Rechercher..." />
+            </div>
+            <table class="mini-table">
+              <tr><th>Équipe</th><th>Faculté</th><th>Discipline</th><th>Joueurs</th><th>Statut</th><th>Actions</th></tr>
+              <tr>
+                <td style="font-weight:600">Les Lions</td>
+                <td>Faculté des Sciences</td>
+                <td>Football</td>
+                <td>11</td>
+                <td><span class="badge badge-green">Actif</span></td>
+                <td style="display:flex;gap:4px;padding:6px 10px">
+                  <button class="btn-sm" style="padding:2px 8px">✏️</button>
+                  <button class="btn-sm" style="padding:2px 8px;border-color:#EF4444;color:#EF4444">🗑</button>
+                </td>
+              </tr>
+              <tr>
+                <td style="font-weight:600">Les Aigles</td>
+                <td>Faculté de Droit</td>
+                <td>Football</td>
+                <td>11</td>
+                <td><span class="badge badge-green">Actif</span></td>
+                <td style="display:flex;gap:4px;padding:6px 10px">
+                  <button class="btn-sm" style="padding:2px 8px">✏️</button>
+                  <button class="btn-sm" style="padding:2px 8px;border-color:#EF4444;color:#EF4444">🗑</button>
+                </td>
+              </tr>
+              <tr>
+                <td style="font-weight:600">Les Cobras</td>
+                <td>Faculté de Médecine</td>
+                <td>Basketball</td>
+                <td>5</td>
+                <td><span class="badge badge-amber">Incomplet</span></td>
+                <td style="display:flex;gap:4px;padding:6px 10px">
+                  <button class="btn-sm" style="padding:2px 8px">✏️</button>
+                  <button class="btn-sm" style="padding:2px 8px;border-color:#EF4444;color:#EF4444">🗑</button>
+                </td>
+              </tr>
+              <tr>
+                <td style="font-weight:600">Les Requins</td>
+                <td>Fac. des Lettres</td>
+                <td>Athlétisme</td>
+                <td>8</td>
+                <td><span class="badge badge-blue">Nouveau</span></td>
+                <td style="display:flex;gap:4px;padding:6px 10px">
+                  <button class="btn-sm" style="padding:2px 8px">✏️</button>
+                  <button class="btn-sm" style="padding:2px 8px;border-color:#EF4444;color:#EF4444">🗑</button>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function show(id, el) {
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  document.getElementById('s-' + id).classList.add('active');
+  el.classList.add('active');
+}
+</script>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagrammes UML - UniGames</title>
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true, theme: 'default' });
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; padding: 20px; background-color: #F8FAFC; color: #1E293B; }
+        h1 { color: #1A4BAD; border-bottom: 2px solid #E2E8F0; padding-bottom: 10px; }
+        h2 { color: #334155; margin-top: 30px; }
+        .diagram-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 40px; }
+    </style>
+</head>
+<body>
+    <h1>Diagrammes UML - Plateforme UniGames (Laravel)</h1>
+
+    <div class="diagram-container">
+        <h2>1. Diagramme de Classes (Cardinatlités Merise)</h2>
+        <pre class="mermaid">
+classDiagram
+    class Edition {
+        +id
+        +nom
+        +date_debut
+        +date_fin
+        +statut
+    }
+    class Faculte {
+        +id
+        +nom
+        +universite
+    }
+    class Discipline {
+        +id
+        +nom
+        +nombre_joueurs_par_equipe
+    }
+    class Equipe {
+        +id
+        +nom
+    }
+    class Joueur {
+        +id
+        +nom
+        +prenom
+        +numero_maillot
+    }
+    class Match_ {
+        +id
+        +date_match
+        +lieu
+        +score_a
+        +score_b
+        +statut
+        +buteurs
+    }
+    class User {
+        +id
+        +name
+        +email
+        +password
+        +role
+    }
+
+    %% Utilisation stricte de 1 et N (Merise)
+    Edition "1" -- "N" Faculte : contient
+    Edition "1" -- "N" Equipe : participe
+    Edition "1" -- "N" Match_ : planifie
+    Faculte "1" -- "N" Equipe : represente
+    Discipline "1" -- "N" Equipe : pratique
+    Discipline "1" -- "N" Match_ : concourt
+    Equipe "1" -- "N" Joueur : compose
+    Equipe "1" -- "N" Match_ : equipeA
+    Equipe "1" -- "N" Match_ : equipeB
+        </pre>
+    </div>
+
+    <div class="diagram-container">
+        <h2>2. Diagramme des Cas d'Utilisation</h2>
+        <pre class="mermaid">
+flowchart LR
+    A((Admin))
+    S((Staff))
+    V((Lecteur))
+
+    subgraph Système UniGames
+        U1(Gérer Éditions et Facultés)
+        U2(Gérer Disciplines et Équipes)
+        U3(Gérer les Utilisateurs/Staff)
+        U4(Saisir Scores et Buteurs)
+        U5(Gérer les Joueurs)
+        U6(Consulter Calendrier et Classements)
+    end
+
+    A --> U1
+    A --> U2
+    A --> U3
+    A --> U4
+    A --> U5
+    A --> U6
+
+    S --> U4
+    S --> U5
+    S --> U6
+
+    V --> U6
+        </pre>
+    </div>
+
+    <div class="diagram-container">
+        <h2>3. Diagramme de Séquence (Saisie d'un Résultat)</h2>
+        <pre class="mermaid">
+sequenceDiagram
+    actor S as Staff
+    participant V as Vue Blade (match/show)
+    participant C as MatchController
+    participant DB as Base de Données
+
+    S->>V: Ouvre la page de détails du match
+    V-->>S: Affiche le formulaire de score (car non joué)
+    S->>V: Remplit score A/B et ajoute dynamiquement des buteurs
+    S->>V: Clique sur "Enregistrer le résultat final"
+    V->>C: POST /matchs/{id}/score (Données)
+    C->>C: Validation (Request) + Application Middleware CanManage
+    C->>DB: UPDATE matchs SET score_a, score_b, buteurs(JSON), statut='joue'
+    DB-->>C: Requête SQL OK
+    C-->>V: Redirection vers index avec message de succès
+    V-->>S: Affiche les nouveaux scores, badges et buteurs
+        </pre>
+    </div>
+</body>
+</html>

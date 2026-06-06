@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagramme d'Architecture - UniGames</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'default',
+            securityLevel: 'loose',
+            fontFamily: 'Inter, sans-serif'
+        });
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .mermaid { display: flex; justify-content: center; }
+    </style>
+</head>
+<body class="min-h-screen p-8">
+    <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100">
+        <div class="bg-indigo-600 p-8 text-white text-center">
+            <h1 class="text-3xl font-bold mb-2">Diagramme Conceptuel de Données (MCD)</h1>
+            <p class="text-indigo-100">Architecture relationnelle de la base de données UniGames</p>
+        </div>
+        
+        <div class="p-8">
+            <div class="mermaid">
+                erDiagram
+                    USER {
+                        int id PK
+                        string name
+                        string email
+                        string role "admin, staff"
+                    }
+                    
+                    EDITION {
+                        int id PK
+                        string nom "ex: Edition 2026"
+                        string statut "a_venir, en_cours, terminee"
+                        date date_debut
+                        date date_fin
+                    }
+                    
+                    FACULTE {
+                        int id PK
+                        string nom
+                        string logo
+                        string couleur
+                    }
+                    
+                    DISCIPLINE {
+                        int id PK
+                        string nom "ex: Football"
+                        string type "collectif, individuel"
+                        int nb_joueurs
+                    }
+                    
+                    EQUIPE {
+                        int id PK
+                        int edition_id FK
+                        int faculte_id FK
+                        int discipline_id FK
+                        int victoires
+                        int nuls
+                        int defaites
+                        int buts_marques
+                        int buts_encaisses
+                    }
+                    
+                    JOUEUR {
+                        int id PK
+                        int equipe_id FK
+                        string nom
+                        string prenom
+                        string sexe "M/F"
+                        int numero_maillot
+                        int buts
+                    }
+                    
+                    MATCH {
+                        int id PK
+                        int edition_id FK
+                        int discipline_id FK
+                        int equipe_a_id FK
+                        int equipe_b_id FK
+                        date date_match
+                        string lieu
+                        string phase "ex: Finale"
+                        string statut "planifie, en_cours, joue"
+                        int score_a
+                        int score_b
+                        json buteurs
+                    }
+
+                    EDITION ||--o{ EQUIPE : "contient"
+                    EDITION ||--o{ MATCH : "organise"
+                    FACULTE ||--o{ EQUIPE : "inscrit"
+                    DISCIPLINE ||--o{ EQUIPE : "participe"
+                    DISCIPLINE ||--o{ MATCH : "se joue"
+                    EQUIPE ||--o{ JOUEUR : "possède"
+                    EQUIPE ||--o{ MATCH : "joue_A"
+                    EQUIPE ||--o{ MATCH : "joue_B"
+            </div>
+        </div>
+
+        <div class="bg-slate-50 p-6 border-t border-slate-100 text-sm text-slate-600">
+            <h3 class="font-bold text-slate-800 mb-2">Légende :</h3>
+            <ul class="list-disc pl-5 space-y-1">
+                <li><strong>PK</strong> : Primary Key (Clé primaire)</li>
+                <li><strong>FK</strong> : Foreign Key (Clé étrangère)</li>
+                <li><strong>||--o{</strong> : Relation "1 à plusieurs" (Un à plusieurs)</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
