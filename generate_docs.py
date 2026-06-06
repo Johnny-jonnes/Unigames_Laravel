@@ -272,6 +272,8 @@ def create_manuel_utilisateur():
     doc.add_paragraph("Mot de passe : Saisissez votre mot de passe. Un lien 'Mot de passe oublie ?' est disponible pour la reinitialisation.", style='List Bullet')
     doc.add_paragraph("Apres authentification reussie, vous etes redirige vers le Tableau de Bord.")
     doc.add_paragraph("En cas d'erreur de saisie, un message d'erreur en rouge apparait sous le champ concerne.")
+    if os.path.exists("docs/images/2_login.jpeg"):
+        doc.add_picture("docs/images/2_login.jpeg", width=Inches(6.0))
 
     doc.add_heading("1.3. Navigation Principale", level=2)
     doc.add_paragraph("La barre laterale gauche (sidebar) constitue le point d'entree principal vers tous les modules de la plateforme. Elle est visible en permanence et contient les liens suivants :")
@@ -294,6 +296,8 @@ def create_manuel_utilisateur():
     doc.add_heading("2. Module : Tableau de Bord", level=1)
     doc.add_heading("2.1. Presentation Generale", level=2)
     doc.add_paragraph("Le tableau de bord est la premiere page affichee apres la connexion. Il offre une vue synthetique de l'edition selectionnee. En haut a droite, un selecteur d'edition permet de basculer entre les differentes competitions (ex : 'Edition 2026').")
+    if os.path.exists("docs/images/4_dashboard_principal.jpeg"):
+        doc.add_picture("docs/images/4_dashboard_principal.jpeg", width=Inches(6.0))
     
     doc.add_heading("2.2. Indicateurs Cles (KPIs)", level=2)
     doc.add_paragraph("La partie superieure affiche des cartes de statistiques avec les indicateurs suivants :")
@@ -324,6 +328,8 @@ def create_manuel_utilisateur():
     doc.add_paragraph("A venir (badge bleu) : L'edition n'a pas encore commence.", style='List Bullet')
     doc.add_paragraph("En cours (badge jaune/orange) : L'edition est active, les matchs sont en cours de deroulement.", style='List Bullet')
     doc.add_paragraph("Terminee (badge vert) : Tous les matchs ont ete joues. L'edition est archivee.", style='List Bullet')
+    if os.path.exists("docs/images/3_selection_edition.jpeg"):
+        doc.add_picture("docs/images/3_selection_edition.jpeg", width=Inches(6.0))
 
     doc.add_heading("3.2. Creer une Edition (Admin)", level=2)
     doc.add_paragraph("Cliquer sur le bouton '+ Nouvelle Edition' dans l'en-tete de la page.")
@@ -351,6 +357,8 @@ def create_manuel_utilisateur():
     doc.add_heading("4. Module : Gestion des Facultes", level=1)
     doc.add_heading("4.1. Liste des Facultes", level=2)
     doc.add_paragraph("Cette page affiche l'ensemble des etablissements universitaires inscrits a l'edition selectionnee. Un champ de recherche en temps reel permet de filtrer les resultats par nom. Chaque carte de faculte affiche le nom, le logo (initiales stylisees), la couleur identitaire et le nombre d'equipes inscrites.")
+    if os.path.exists("docs/images/5_liste_facultes.jpeg"):
+        doc.add_picture("docs/images/5_liste_facultes.jpeg", width=Inches(6.0))
     
     doc.add_heading("4.2. Creer une Faculte (Admin)", level=2)
     doc.add_paragraph("Cliquer sur '+ Nouvelle Faculte'. Remplir les champs suivants :")
@@ -362,14 +370,20 @@ def create_manuel_utilisateur():
             ["Couleur", "Selecteur couleur", "Non", "Couleur identitaire pour les badges et graphiques"],
         ]
     )
+    if os.path.exists("docs/images/6_ajouter_faculte.jpeg"):
+        doc.add_picture("docs/images/6_ajouter_faculte.jpeg", width=Inches(6.0))
 
     doc.add_heading("4.3. Detail d'une Faculte", level=2)
     doc.add_paragraph("La page de detail affiche les informations de la faculte ainsi que la liste de toutes ses equipes inscrites, avec pour chaque equipe : la discipline, le nombre de joueurs et un lien vers la fiche de l'equipe.")
+    if os.path.exists("docs/images/7_details_faculte.jpeg"):
+        doc.add_picture("docs/images/7_details_faculte.jpeg", width=Inches(6.0))
 
     # --- GESTION DES EQUIPES ---
     doc.add_heading("5. Module : Gestion des Equipes", level=1)
     doc.add_heading("5.1. Liste des Equipes", level=2)
     doc.add_paragraph("La page affiche toutes les equipes de l'edition en cours sous forme de tableau. Chaque ligne indique le nom de l'equipe, sa faculte d'appartenance, la discipline pratiquee et le nombre de joueurs inscrits. Une barre de recherche filtre les resultats en temps reel.")
+    if os.path.exists("docs/images/11_repertoire_equipes.jpeg"):
+        doc.add_picture("docs/images/11_repertoire_equipes.jpeg", width=Inches(6.0))
 
     doc.add_heading("5.2. Inscription d'une Equipe (Admin)", level=2)
     doc.add_paragraph("Le formulaire de creation d'equipe requiert :")
@@ -383,6 +397,8 @@ def create_manuel_utilisateur():
         ]
     )
     doc.add_paragraph("Regle de gestion : Une faculte ne peut inscrire qu'une seule equipe par discipline et par edition. En cas de doublon, le systeme refuse la creation avec un message d'erreur.")
+    if os.path.exists("docs/images/9_ajouter_equipe.jpeg"):
+        doc.add_picture("docs/images/9_ajouter_equipe.jpeg", width=Inches(6.0))
 
     doc.add_heading("5.3. Fiche Detaillee d'une Equipe", level=2)
     doc.add_paragraph("La page de detail d'une equipe affiche :")
@@ -395,6 +411,8 @@ def create_manuel_utilisateur():
     doc.add_heading("6. Module : Gestion des Joueurs", level=1)
     doc.add_heading("6.1. Liste des Joueurs", level=2)
     doc.add_paragraph("La page des joueurs affiche un tableau complet de tous les sportifs inscrits pour l'edition selectionnee. Les colonnes affichees sont : Nom, Prenom, Numero de Maillot, Sexe, Equipe, Faculte, et Nombre de Buts. Un champ de recherche en haut permet de filtrer instantanement par nom ou equipe.")
+    if os.path.exists("docs/images/12_repertoire_joueurs.jpeg"):
+        doc.add_picture("docs/images/12_repertoire_joueurs.jpeg", width=Inches(6.0))
 
     doc.add_heading("6.2. Enregistrer un Joueur (Admin/Staff)", level=2)
     add_styled_table(doc,
@@ -407,6 +425,8 @@ def create_manuel_utilisateur():
             ["Numero de Maillot", "Entier", "Non", "Minimum 1"],
         ]
     )
+    if os.path.exists("docs/images/10_ajouter_joueur.jpeg"):
+        doc.add_picture("docs/images/10_ajouter_joueur.jpeg", width=Inches(6.0))
 
     doc.add_heading("6.3. Actions Disponibles", level=2)
     doc.add_paragraph("Modifier : Le bouton bleu 'Modifier' ouvre le formulaire de modification pre-rempli avec les donnees actuelles du joueur.", style='List Bullet')
@@ -423,6 +443,8 @@ def create_manuel_utilisateur():
     doc.add_paragraph("Le score (si le match est joue) ou 'VS' (si planifie)", style='List Bullet')
     doc.add_paragraph("Le statut du match : badge 'Joue' (vert), 'En cours' (orange) ou 'Planifie' (bleu)", style='List Bullet')
     doc.add_paragraph("Les boutons d'action : Voir, Modifier (bleu), Supprimer (rouge)", style='List Bullet')
+    if os.path.exists("docs/images/13_calendrier_rencontres.jpeg"):
+        doc.add_picture("docs/images/13_calendrier_rencontres.jpeg", width=Inches(6.0))
 
     doc.add_heading("7.2. Programmer un Match (Admin/Staff)", level=2)
     doc.add_paragraph("Cliquer sur le bouton '+ Programmer un match' dans l'en-tete de la page. Ce bouton n'apparait que si l'edition selectionnee n'est pas terminee.")
@@ -455,6 +477,8 @@ def create_manuel_utilisateur():
 
     doc.add_heading("7.4. Fiche Detaillee d'un Match", level=2)
     doc.add_paragraph("La page de detail d'un match joue presente un 'scoreboard' central avec les logos des deux equipes, le score en grand format, la liste des buteurs de chaque cote, ainsi que les informations contextuelles (date, lieu, phase, discipline). Un badge 'Termine' confirme visuellement que le match est clos.")
+    if os.path.exists("docs/images/14_details_match.jpeg"):
+        doc.add_picture("docs/images/14_details_match.jpeg", width=Inches(6.0))
 
     # --- CLASSEMENTS ---
     doc.add_heading("8. Module : Classements", level=1)
@@ -476,6 +500,8 @@ def create_manuel_utilisateur():
         ]
     )
     doc.add_paragraph("Le classement est trie automatiquement par nombre de points decroissant, puis par difference de buts en cas d'egalite.")
+    if os.path.exists("docs/images/15_classements_statistiques.jpeg"):
+        doc.add_picture("docs/images/15_classements_statistiques.jpeg", width=Inches(6.0))
 
     doc.add_heading("8.2. Tableau des Meilleurs Buteurs", level=2)
     doc.add_paragraph("En bas de la page de classement, un tableau affiche le top 10 des meilleurs buteurs de l'edition, toutes disciplines confondues. Pour chaque joueur : nom, prenom, equipe, faculte, discipline et nombre de buts.")
@@ -489,11 +515,15 @@ def create_manuel_utilisateur():
     doc.add_paragraph("Petite Finale (3eme place) : Carte avec bordure en pointilles.", style='List Bullet')
     doc.add_paragraph("Grande Finale : Carte doree premium avec couronne emoji pour le champion. Un label 'OR' et un fond degrade ambre signalent l'importance de ce match.", style='List Bullet')
     doc.add_paragraph("Chaque carte de match est cliquable et redirige vers la fiche detaillee du match correspondant.")
+    if os.path.exists("docs/images/18_arbre_tournoi.jpeg"):
+        doc.add_picture("docs/images/18_arbre_tournoi.jpeg", width=Inches(6.0))
 
     # --- GESTION DES UTILISATEURS ---
     doc.add_heading("10. Module : Gestion des Utilisateurs (Admin)", level=1)
     doc.add_heading("10.1. Liste des Utilisateurs", level=2)
     doc.add_paragraph("Accessible uniquement aux administrateurs via le menu 'Gestion Staff'. Cette page affiche un tableau de tous les comptes utilisateurs avec : nom, email, role (badge colore) et date d'inscription. Des boutons 'Modifier' et 'Supprimer' sont disponibles pour chaque compte.")
+    if os.path.exists("docs/images/16_gestion_staff.jpeg"):
+        doc.add_picture("docs/images/16_gestion_staff.jpeg", width=Inches(6.0))
 
     doc.add_heading("10.2. Creer un Compte Staff", level=2)
     add_styled_table(doc,
@@ -515,8 +545,8 @@ def create_manuel_utilisateur():
     doc.add_paragraph("Informations du Profil : Modification du nom et de l'email.", style='List Bullet')
     doc.add_paragraph("Modification du Mot de Passe : Saisie de l'ancien mot de passe, puis du nouveau mot de passe avec confirmation.", style='List Bullet')
     doc.add_paragraph("Suppression du Compte : Action irreversible necessitant la saisie du mot de passe actuel pour confirmation.", style='List Bullet')
-
-    add_screenshots(doc, "Captures d'Ecran (Manuel Utilisateur)")
+    if os.path.exists("docs/images/17_profil_parametres.jpeg"):
+        doc.add_picture("docs/images/17_profil_parametres.jpeg", width=Inches(6.0))
 
     doc.save("docs/2_Manuel_Utilisateur.docx")
     print("[OK] 2_Manuel_Utilisateur.docx")
@@ -1150,31 +1180,43 @@ def create_maquette():
     doc.add_paragraph("Layout : Centrage vertical et horizontal sur fond degrade bleu-indigo avec motifs de fond subtils.")
     doc.add_paragraph("Contenu : Carte blanche centree contenant le logo UniGames, le titre 'Connexion', deux champs de saisie (email et mot de passe), une case a cocher 'Se souvenir de moi', un bouton primaire 'Se connecter' pleine largeur, et un lien 'Mot de passe oublie ?' en dessous.")
     doc.add_paragraph("Experience utilisateur : Le champ email recoit le focus automatiquement a l'ouverture. Les erreurs de validation s'affichent en rouge sous chaque champ concerne.")
+    if os.path.exists("docs/images/2_login.jpeg"):
+        doc.add_picture("docs/images/2_login.jpeg", width=Inches(6.0))
 
     doc.add_heading("3.2. Tableau de Bord", level=2)
     doc.add_paragraph("Section haute : Selecteur d'edition en haut a droite (dropdown). Grille de 4 a 8 cartes KPI alignees horizontalement, chacune avec une icone, un chiffre en gras et un libelle descriptif.")
     doc.add_paragraph("Section milieu : Deux colonnes - 'Derniers Resultats' (5 matchs les plus recents avec scores) et 'Prochains Matchs' (5 matchs planifies avec dates). Chaque ligne est cliquable.")
     doc.add_paragraph("Section basse : Tableau 'Meilleurs Buteurs' avec classement des 5 premiers joueurs. Les donnees incluent le nom, l'equipe, la faculte et le nombre de buts.")
+    if os.path.exists("docs/images/4_dashboard_principal.jpeg"):
+        doc.add_picture("docs/images/4_dashboard_principal.jpeg", width=Inches(6.0))
 
     doc.add_heading("3.3. Page des Matchs", level=2)
     doc.add_paragraph("Structure en accordeons : Chaque discipline sportive possede un panneau repliable. Le panneau ouvert affiche un tableau complet de tous les matchs.")
     doc.add_paragraph("Barre de recherche : En haut, un champ de recherche en temps reel filtre les matchs par nom d'equipe ou lieu.")
     doc.add_paragraph("Tableau des matchs : Colonnes Date/Lieu, Equipe A, Score, Equipe B, Statut (badge colore), Actions (Voir/Modifier/Supprimer).")
     doc.add_paragraph("Ligne cliquable : Chaque ligne du tableau est cliquable et redirige vers la fiche detaillee du match. Les boutons d'action utilisent event.stopPropagation() pour eviter les conflits de clic.")
+    if os.path.exists("docs/images/13_calendrier_rencontres.jpeg"):
+        doc.add_picture("docs/images/13_calendrier_rencontres.jpeg", width=Inches(6.0))
 
     doc.add_heading("3.4. Fiche Match (Score)", level=2)
     doc.add_paragraph("Scoreboard central : Grande carte avec les logos/initiales des deux equipes, le score en format XXL (36px monospace) et un badge 'Termine' (vert). Les buteurs de chaque equipe sont listes sous le score.")
     doc.add_paragraph("Informations contextuelles : Grille 3 colonnes affichant Date, Lieu et Phase.")
     doc.add_paragraph("Formulaire de saisie (si match planifie) : Deux colonnes avec champ numerique geant pour le score et section dynamique d'ajout de buteurs via Alpine.js.")
+    if os.path.exists("docs/images/14_details_match.jpeg"):
+        doc.add_picture("docs/images/14_details_match.jpeg", width=Inches(6.0))
 
     doc.add_heading("3.5. Arbre du Tournoi", level=2)
     doc.add_paragraph("Disposition horizontale avec defilement : Les phases sont disposees de gauche a droite (Poules -> Quarts -> Demies -> Petite Finale -> Grande Finale). Chaque phase est une colonne verticale de cartes de matchs.")
     doc.add_paragraph("Cartes de match : Style different selon la phase. Les matchs de poules sont compacts. Les demi-finales ont un fond colore pour le vainqueur. La grande finale est mise en valeur avec un degrade ambre, une ombre prononcee et un badge 'OR'.")
+    if os.path.exists("docs/images/18_arbre_tournoi.jpeg"):
+        doc.add_picture("docs/images/18_arbre_tournoi.jpeg", width=Inches(6.0))
 
     doc.add_heading("3.6. Page des Classements", level=2)
     doc.add_paragraph("Selecteur de discipline : Menu deroulant en haut permettant de choisir la discipline sportive.")
     doc.add_paragraph("Tableau de classement : Style zebra (lignes alternees), en-tete bleue. Colonnes : #, Equipe (avec faculte), MJ, V, N, D, BM, BE, DB, Pts. La premiere ligne est mise en evidence.")
     doc.add_paragraph("Meilleurs buteurs : Tableau secondaire en dessous avec le top 10, incluant la photo/initiale du joueur, son nom, equipe, faculte et nombre de buts.")
+    if os.path.exists("docs/images/15_classements_statistiques.jpeg"):
+        doc.add_picture("docs/images/15_classements_statistiques.jpeg", width=Inches(6.0))
 
     doc.add_heading("4. Composants de Navigation", level=1)
     doc.add_heading("4.1. Sidebar (Barre Laterale)", level=2)
@@ -1182,8 +1224,6 @@ def create_maquette():
     
     doc.add_heading("4.2. Topbar (Barre Superieure)", level=2)
     doc.add_paragraph("Barre horizontale en haut de la zone de contenu. Elle contient le titre de la page courante a gauche et les actions contextuelles a droite (boutons de creation, selecteur d'edition). L'avatar de l'utilisateur connecte est affiche a l'extreme droite avec un menu deroulant (Profil, Deconnexion).")
-
-    add_screenshots(doc, "Captures d'Ecran (Dossier Maquettage)")
 
     doc.save("docs/7_Dossier_Maquettage.docx")
     print("[OK] 7_Dossier_Maquettage.docx")
